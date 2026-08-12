@@ -33,11 +33,18 @@ body {
   color: var(--hhgoa-black);
 }
 
-/* Scrollbar — tropical green */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #094f2b; }
-::-webkit-scrollbar-thumb { background: #fee101; border-radius: 0; }
-::-webkit-scrollbar-thumb:hover { background: #ff0080; }
+/* Scrollbar — Glowing Yellow */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0b6839; border-left: 1px solid rgba(254,225,1,0.1); }
+::-webkit-scrollbar-thumb { 
+  background: #fee101; 
+  border-radius: 0; 
+  box-shadow: 0 0 10px rgba(254,225,1,1);
+}
+::-webkit-scrollbar-thumb:hover { 
+  background: #ff0080; 
+  box-shadow: 0 0 12px rgba(255,0,128,1);
+}
 
 /* ═══════════════════════════════════════
    CTA BUTTON — Yellow, square corners, glow

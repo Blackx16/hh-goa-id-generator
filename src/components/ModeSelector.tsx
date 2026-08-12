@@ -1,16 +1,13 @@
 "use client";
 
 import React from "react";
-import { GeneratorMode, PfpStyle, ThemeColor } from "@/types/generator";
-import { THEMES } from "@/lib/constants";
+import { GeneratorMode, PfpStyle } from "@/types/generator";
 import { soundFx } from "@/lib/sound-effects";
 import { BadgeCheck, UserCircle } from "lucide-react";
 
 interface ModeSelectorProps {
   mode: GeneratorMode;
   onModeChange: (mode: GeneratorMode) => void;
-  theme: ThemeColor;
-  onThemeChange: (theme: ThemeColor) => void;
   pfpStyle: PfpStyle;
   onPfpStyleChange: (style: PfpStyle) => void;
 }
@@ -18,8 +15,6 @@ interface ModeSelectorProps {
 export function ModeSelector({
   mode,
   onModeChange,
-  theme,
-  onThemeChange,
   pfpStyle,
   onPfpStyleChange,
 }: ModeSelectorProps) {
@@ -28,10 +23,7 @@ export function ModeSelector({
     onModeChange(newMode);
   };
 
-  const handleTheme = (newTheme: ThemeColor) => {
-    soundFx.playClick();
-    onThemeChange(newTheme);
-  };
+
 
   const handlePfpStyle = (newStyle: PfpStyle) => {
     soundFx.playClick();
@@ -50,8 +42,8 @@ export function ModeSelector({
         borderRadius: 0,
       }}>
         {[
-          { id: "badge" as GeneratorMode, label: "FORMAT B: BUILDER ID", Icon: BadgeCheck },
           { id: "pfp"   as GeneratorMode, label: "FORMAT A: PFP FRAME",  Icon: UserCircle },
+          { id: "badge" as GeneratorMode, label: "FORMAT B: BUILDER ID", Icon: BadgeCheck },
         ].map(({ id, label, Icon }) => (
           <button
             key={id}
@@ -69,47 +61,6 @@ export function ModeSelector({
             <span className="sm:hidden">{id === "badge" ? "BADGE" : "PFP"}</span>
           </button>
         ))}
-      </div>
-
-      {/* Theme Color Selector */}
-      <div className="hhgoa-card p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="section-label text-hhgoa-green">VISUAL THEME</span>
-          <span className="font-body text-xs font-bold text-hhgoa-black/60 uppercase">
-            {THEMES[theme].name}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {(Object.keys(THEMES) as ThemeColor[]).map((thmKey) => {
-            const thm = THEMES[thmKey];
-            const isSelected = theme === thmKey;
-            return (
-              <button
-                key={thmKey}
-                type="button"
-                onClick={() => handleTheme(thmKey)}
-                className={`py-2 px-2.5 text-left flex items-center gap-2 transition-all font-body text-xs font-semibold ${
-                  isSelected
-                    ? "bg-hhgoa-green text-hhgoa-white"
-                    : "bg-hhgoa-cream text-hhgoa-black/60 hover:text-hhgoa-black border border-hhgoa-black/10"
-                }`}
-                style={{
-                  borderRadius: 0,
-                  boxShadow: isSelected ? "3px 4px 0 rgba(0,0,0,0.2)" : "none",
-                }}
-              >
-                <span
-                  className="h-3 w-3 shrink-0"
-                  style={{ backgroundColor: thm.primary, borderRadius: 0 }}
-                />
-                <span className="truncate uppercase tracking-wider text-[10px]">
-                  {thm.name}
-                </span>
-              </button>
-            );
-          })}
-        </div>
       </div>
 
       {/* PFP Style (badge mode only) */}

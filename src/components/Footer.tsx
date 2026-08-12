@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { HH_GOA_CONFIG } from "@/lib/constants";
 import { soundFx } from "@/lib/sound-effects";
 import { ExternalLink } from "lucide-react";
@@ -8,28 +8,6 @@ import { ExternalLink } from "lucide-react";
 const XMARK = "× × × × × × × × × × × × × × × × × × × × × × × × × × × × × ×";
 
 export function Footer() {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-
-  useEffect(() => {
-    const target = new Date("2026-10-28T09:00:00+05:30").getTime();
-    const tick = () => {
-      const diff = target - Date.now();
-      if (diff > 0) {
-        setTimeLeft({
-          days: Math.floor(diff / 86400000),
-          hours: Math.floor((diff / 3600000) % 24),
-          minutes: Math.floor((diff / 60000) % 60),
-          seconds: Math.floor((diff / 1000) % 60),
-        });
-      }
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  const pad = (n: number) => String(n).padStart(2, "0");
-
   return (
     <footer className="mt-16 bg-hhgoa-green">
 
@@ -38,42 +16,7 @@ export function Footer() {
         {XMARK}
       </div>
 
-      {/* Countdown Banner */}
-      <div className="bg-black/20 py-5 px-6">
-        <div className="max-w-[1060px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <div className="section-label text-hhgoa-yellow">Countdown to Genesis Day</div>
-            <div className="font-body text-hhgoa-white/70 text-xs mt-0.5">OCT 28, 2026 · GOA, INDIA</div>
-          </div>
 
-          <div className="flex items-end gap-1 font-heading font-black text-hhgoa-yellow">
-            <div className="text-center">
-              <div className="text-4xl leading-none">{pad(timeLeft.days)}</div>
-              <div className="section-label text-hhgoa-white/50 text-[9px] mt-1">DAYS</div>
-            </div>
-            <div className="text-3xl pb-5 opacity-50">:</div>
-            <div className="text-center">
-              <div className="text-4xl leading-none">{pad(timeLeft.hours)}</div>
-              <div className="section-label text-hhgoa-white/50 text-[9px] mt-1">HRS</div>
-            </div>
-            <div className="text-3xl pb-5 opacity-50">:</div>
-            <div className="text-center">
-              <div className="text-4xl leading-none">{pad(timeLeft.minutes)}</div>
-              <div className="section-label text-hhgoa-white/50 text-[9px] mt-1">MINS</div>
-            </div>
-            <div className="text-3xl pb-5 opacity-50">:</div>
-            <div className="text-center">
-              <div className="text-4xl leading-none">{pad(timeLeft.seconds)}</div>
-              <div className="section-label text-hhgoa-white/50 text-[9px] mt-1">SECS</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* × Divider */}
-      <div className="hhgoa-divider py-1.5">
-        {XMARK}
-      </div>
 
       {/* Main footer content */}
       <div className="max-w-[1060px] mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">

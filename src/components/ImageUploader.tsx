@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ImageTransform } from "@/types/generator";
 import { SAMPLE_AVATARS } from "@/lib/constants";
 import { soundFx } from "@/lib/sound-effects";
@@ -27,6 +27,54 @@ export function ImageUploader({
   const [isDragging, setIsDragging] = useState(false);
   const [isWebcamOpen, setIsWebcamOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
+  const [dimensions, setDimensions] = useState<{w: number, h: number} | null>(null);
+
+  useEffect(() => {
+    if (!imageSrc) {
+      setDimensions(null);
+      return;
+    }
+    const img = new window.Image();
+    img.onload = () => setDimensions({ w: img.width, h: img.height });
+    img.src = imageSrc;
+  }, [imageSrc]);
+
+  const isPortrait = dimensions ? dimensions.h > dimensions.w : false;
+
+  useEffect(() => {
+    if (!dragStart) return;
+
+    const handleMouseMove = (e: MouseEvent | TouchEvent) => {
+      const clientX = 'touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : (e as MouseEvent).clientY;
+      
+      const dx = (clientX - dragStart.x) / transform.zoom;
+      const dy = (clientY - dragStart.y) / transform.zoom;
+      
+      onTransformChange({
+        ...transform,
+        panX: transform.panX + dx,
+        panY: transform.panY + dy,
+      });
+      
+      setDragStart({ x: clientX, y: clientY });
+    };
+
+    const handleMouseUp = () => setDragStart(null);
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("touchmove", handleMouseMove, { passive: false });
+    window.addEventListener("touchend", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleMouseMove);
+      window.removeEventListener("touchend", handleMouseUp);
+    };
+  }, [dragStart, transform, onTransformChange]);
 
   const handleFile = async (file: File) => {
     try {
@@ -133,7 +181,51 @@ export function ImageUploader({
         </div>
       ) : (
         /* Image Controls */
-        <div className="space-y-3 p-3 bg-hhgoa-green/8 border border-hhgoa-black/10">
+        <div className="flex flex-col sm:flex-row gap-4 p-3 bg-hhgoa-green/8 border border-hhgoa-black/10 items-center sm:items-start">
+          
+          {/* Draggable Preview Circle (Matches CardPreview exactly) */}
+          <div 
+            className="relative shrink-0 flex flex-col items-center justify-center bg-black rounded-full cursor-move"
+            style={{ width: "200px", height: "200px", touchAction: "none" }}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              setDragStart({ x: e.clientX, y: e.clientY });
+            }}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+            }}
+          >
+            <div
+              style={{
+                width: "145px",
+                height: "145px",
+                border: "4px solid #FFFFFF",
+                overflow: "hidden", 
+                position: "relative",
+                background: "#111",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <img
+                src={imageSrc}
+                alt="Preview"
+                className="absolute pointer-events-none select-none max-w-none"
+                draggable={false}
+                style={{
+                  width: isPortrait ? "100%" : "auto",
+                  height: isPortrait ? "auto" : "100%",
+                  objectFit: "cover",
+                  transform: `translate(${transform.panX}px, ${transform.panY}px) scale(${transform.zoom}) rotate(${transform.rotate}deg)`,
+                  transformOrigin: "center center",
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3 flex-1 w-full">
           {/* Zoom */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between font-body text-[11px] font-bold text-hhgoa-black/60 uppercase tracking-wider">
@@ -189,50 +281,25 @@ export function ImageUploader({
             ))}
           </div>
 
-          <div className="flex items-center gap-1.5 font-body text-[10px] text-hhgoa-black/45 uppercase tracking-wider">
-            <Move className="h-3 w-3 text-hhgoa-green shrink-0" />
-            Click &amp; drag on the preview to pan your photo
+            <div className="flex items-center gap-1.5 font-body text-[10px] text-hhgoa-black/45 uppercase tracking-wider">
+              <Move className="h-3 w-3 text-hhgoa-green shrink-0" />
+              Click &amp; drag on the preview circle to pan your photo
+            </div>
           </div>
         </div>
       )}
 
-      {/* Webcam + Sample Avatars */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="section-label text-hhgoa-green text-[10px]">QUICK INPUT OR DEMO</span>
-          <button
-            type="button"
-            onClick={() => { soundFx.playClick(); setIsWebcamOpen(true); }}
-            className="flex items-center gap-1 font-body text-[11px] font-bold uppercase text-hhgoa-pink hover:opacity-75 transition-opacity"
-          >
-            <Camera className="h-3 w-3" />
-            USE WEBCAM
-          </button>
-        </div>
-
-        <div className="grid grid-cols-4 gap-2">
-          {SAMPLE_AVATARS.map((sample, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => { soundFx.playShutter(); onImageChange(sample.url); onTransformChange({ zoom: 1, panX: 0, panY: 0, rotate: 0 }); }}
-              className="group relative aspect-square overflow-hidden border-2 border-transparent hover:border-hhgoa-yellow transition-all"
-              style={{ borderRadius: 0, boxShadow: "3px 4px 0 rgba(0,0,0,0.15)" }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={sample.url}
-                alt={sample.name}
-                className="w-full h-full object-cover group-hover:opacity-85 transition-opacity"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent flex items-end p-1">
-                <span className="font-body text-[9px] font-bold text-white truncate w-full uppercase">
-                  {sample.name}
-                </span>
-              </div>
-            </button>
-          ))}
-        </div>
+      {/* Webcam */}
+      <div className="pt-2 border-t border-hhgoa-black/10">
+        <button
+          type="button"
+          onClick={() => { soundFx.playClick(); setIsWebcamOpen(true); }}
+          className="w-full flex items-center justify-center gap-2 py-2.5 font-body text-xs font-bold uppercase text-hhgoa-pink hover:bg-hhgoa-pink/10 transition-colors border border-hhgoa-pink/30"
+          style={{ borderRadius: 0 }}
+        >
+          <Camera className="h-4 w-4" />
+          USE WEBCAM TO TAKE PHOTO
+        </button>
       </div>
 
       <WebcamModal

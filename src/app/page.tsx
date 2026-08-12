@@ -42,16 +42,25 @@ const DEFAULT_TRANSFORM: ImageTransform = {
 
 export default function Home() {
   const [userData, setUserData] = useState<UserData>(DEFAULT_USER_DATA);
-  const [imageSrc, setImageSrc] = useState<string | null>(SAMPLE_AVATARS[0].url);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [transform, setTransform] = useState<ImageTransform>(DEFAULT_TRANSFORM);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        setUserData((prev) => ({ ...prev, ...parsed }));
+      const savedUser = localStorage.getItem(STORAGE_KEY);
+      if (savedUser) {
+        setUserData((prev) => ({ ...prev, ...JSON.parse(savedUser) }));
+      }
+      
+      const savedImage = localStorage.getItem(`${STORAGE_KEY}_image`);
+      if (savedImage) {
+        setImageSrc(savedImage);
+      }
+      
+      const savedTransform = localStorage.getItem(`${STORAGE_KEY}_transform`);
+      if (savedTransform) {
+        setTransform(JSON.parse(savedTransform));
       }
     } catch (err) {
       console.warn("Could not read local storage:", err);
@@ -62,13 +71,22 @@ export default function Home() {
   const handleUserDataChange = (updated: Partial<UserData>) => {
     setUserData((prev) => {
       const next = { ...prev, ...updated };
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      } catch (err) {
-        console.warn("Could not write to local storage:", err);
-      }
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch (err) {}
       return next;
     });
+  };
+
+  const handleImageChange = (src: string | null) => {
+    setImageSrc(src);
+    try { 
+      if (src) localStorage.setItem(`${STORAGE_KEY}_image`, src);
+      else localStorage.removeItem(`${STORAGE_KEY}_image`);
+    } catch (err) { console.warn(err) }
+  };
+
+  const handleTransformChange = (newTransform: ImageTransform) => {
+    setTransform(newTransform);
+    try { localStorage.setItem(`${STORAGE_KEY}_transform`, JSON.stringify(newTransform)); } catch (err) {}
   };
 
   return (
@@ -139,16 +157,14 @@ export default function Home() {
                 <ModeSelector
                   mode={userData.mode}
                   onModeChange={(mode: GeneratorMode) => handleUserDataChange({ mode })}
-                  theme={userData.theme}
-                  onThemeChange={(theme: ThemeColor) => handleUserDataChange({ theme })}
                   pfpStyle={userData.pfpStyle}
                   onPfpStyleChange={(pfpStyle: PfpStyle) => handleUserDataChange({ pfpStyle })}
                 />
                 <ImageUploader
                   imageSrc={imageSrc}
-                  onImageChange={setImageSrc}
+                  onImageChange={handleImageChange}
                   transform={transform}
-                  onTransformChange={setTransform}
+                  onTransformChange={handleTransformChange}
                 />
                 <FormControls
                   userData={userData}
@@ -165,99 +181,6 @@ export default function Home() {
                   onTransformChange={setTransform}
                 />
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── GUIDELINES SECTION (Green) ── */}
-        <section className="bg-hhgoa-green py-12 px-6">
-          <div className="max-w-[1060px] mx-auto">
-
-            {/* Section header */}
-            <div className="text-center mb-8 space-y-2">
-              <div className="section-label text-hhgoa-yellow">THE ROADMAP</div>
-              <h2 className="font-heading font-black text-hhgoa-white uppercase text-3xl sm:text-4xl">
-                SUBMISSION CHECKLIST
-              </h2>
-              <p className="font-body text-sm text-hhgoa-white/60 max-w-md mx-auto">
-                Ensure your entry meets all official Hacker House Goa 2026 criteria
-              </p>
-            </div>
-
-            {/* 3 Guide Cards — cream bg, hard shadow */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {[
-                {
-                  icon: <CheckCircle2 className="h-5 w-5 shrink-0" style={{ color: "#ff0080" }} />,
-                  num: "01",
-                  title: "#FrameInGoa HASHTAG",
-                  body: (
-                    <>
-                      Your submission must include an X post containing{" "}
-                      <span className="font-bold" style={{ color: "#ff0080" }}>#FrameInGoa</span> to
-                      be validly indexed on the W Celeb Radar.
-                    </>
-                  ),
-                },
-                {
-                  icon: <ShieldCheck className="h-5 w-5 shrink-0" style={{ color: "#0b6839" }} />,
-                  num: "02",
-                  title: "ZERO LOGIN GATES",
-                  body: "Everything runs client-side with near-instant rendering. No account or signup wall required to generate or download.",
-                },
-                {
-                  icon: <Flame className="h-5 w-5 shrink-0" style={{ color: "#fee101" }} />,
-                  num: "03",
-                  title: "CRISP HIGH-RES EXPORT",
-                  body: "High-DPI canvas engine renders clean 2×/3× PNG images with sub-pixel alignment and sharp typography for social media.",
-                },
-              ].map((card) => (
-                <div key={card.num} className="hhgoa-card p-5 space-y-3">
-                  {/* Pin */}
-                  <div className="flex items-start gap-3">
-                    <div
-                      className="h-6 w-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 font-heading font-black text-xs text-hhgoa-black"
-                      style={{ backgroundColor: "#fee101" }}
-                    >
-                      {card.num}
-                    </div>
-                    {card.icon}
-                    <h3 className="font-heading font-bold text-hhgoa-black text-sm uppercase leading-tight">
-                      {card.title}
-                    </h3>
-                  </div>
-                  <p className="font-body text-xs text-hhgoa-black/70 leading-relaxed">
-                    {card.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* × Divider */}
-        <div className="hhgoa-divider py-2 bg-hhgoa-green">{XMARK}</div>
-
-        {/* ── MISSION CTA ── */}
-        <section className="bg-hhgoa-green py-14 px-6 text-center">
-          <div className="max-w-[1060px] mx-auto space-y-4">
-            <p className="section-label text-hhgoa-yellow">LESS NOISE. MORE SIGNAL.</p>
-            <h2
-              className="font-heading font-black text-hhgoa-white uppercase leading-none"
-              style={{ fontSize: "clamp(2.2rem, 6vw, 4rem)" }}
-            >
-              4 DAYS. ONE RHYTHM.<br />
-              <span style={{ color: "#fee101" }}>EVERYTHING INTENTIONAL.</span>
-            </h2>
-            <div className="pt-4">
-              <a
-                href="https://devfolio.co/discover"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary text-sm px-8 py-3"
-              >
-                GO TO DEVFOLIO →
-              </a>
             </div>
           </div>
         </section>

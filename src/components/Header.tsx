@@ -22,7 +22,8 @@ export function Header() {
           : "bg-transparent"
       }`}
     >
-      {/* Top Ticker Bar */}
+      {/* Top Ticker Bar (Commented out per user request) */}
+      {/* 
       <div className="bg-black/30 border-b border-hhgoa-yellow/15 overflow-hidden">
         <div className="marquee-track py-1.5 text-[11px] font-body font-semibold text-hhgoa-yellow tracking-widest uppercase select-none">
           {Array.from({ length: 8 }).map((_, i) => (
@@ -32,6 +33,7 @@ export function Header() {
           ))}
         </div>
       </div>
+      */}
 
       {/* Main Nav Bar */}
       <div className="max-w-[1060px] mx-auto px-6 h-16 flex items-center justify-between">

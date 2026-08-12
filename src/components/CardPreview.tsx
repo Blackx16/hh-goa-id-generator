@@ -1,19 +1,17 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ImageTransform, UserData } from "@/types/generator";
-import { THEMES, HH_GOA_CONFIG } from "@/lib/constants";
-import { renderGraphicToCanvas } from "@/lib/canvas-renderer";
+import { THEMES } from "@/lib/constants";
 import { soundFx } from "@/lib/sound-effects";
 import confetti from "canvas-confetti";
+import { toPng, toBlob } from "html-to-image";
 import {
   Download,
   Share2,
   Copy,
   Check,
-  Sparkles,
-  Move,
-  Maximize,
+  User,
 } from "lucide-react";
 
 interface CardPreviewProps {
@@ -29,9 +27,8 @@ export function CardPreview({
   transform,
   onTransformChange,
 }: CardPreviewProps) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
+  const captureRef = useRef<HTMLDivElement | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -40,43 +37,25 @@ export function CardPreview({
   const [rotateY, setRotateY] = useState(0);
   const [glarePos, setGlarePos] = useState({ x: 50, y: 50 });
   const [isHovered, setIsHovered] = useState(false);
+  const [dimensions, setDimensions] = useState<{w: number, h: number} | null>(null);
 
-  // Drag Panning State on Canvas
-  const [isDragging, setIsDragging] = useState(false);
-  const dragStartRef = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+  useEffect(() => {
+    if (!imageSrc) {
+      setDimensions(null);
+      return;
+    }
+    const img = new window.Image();
+    img.onload = () => setDimensions({ w: img.width, h: img.height });
+    img.src = imageSrc;
+  }, [imageSrc]);
+
+  const isPortrait = dimensions ? dimensions.h > dimensions.w : false;
 
   const theme = THEMES[userData.theme] || THEMES.cyan;
 
-  // Load Image Object
-  useEffect(() => {
-    if (!imageSrc) {
-      setImageElement(null);
-      return;
-    }
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = imageSrc;
-    img.onload = () => setImageElement(img);
-    img.onerror = () => {
-      console.warn("Could not load image element");
-      setImageElement(null);
-    };
-  }, [imageSrc]);
-
-  // Live Canvas Render
-  useEffect(() => {
-    if (!canvasRef.current) return;
-    renderGraphicToCanvas(canvasRef.current, {
-      userData,
-      imageElement,
-      transform,
-      scale: 1, // standard preview scale
-    });
-  }, [userData, imageElement, transform]);
-
   // 3D Mouse Parallax Tilt
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current || isDragging) return;
+    if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -100,84 +79,19 @@ export function CardPreview({
     setIsHovered(false);
     setRotateX(0);
     setRotateY(0);
-    setIsDragging(false);
-  };
-
-  // Direct Canvas Drag to Pan
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!imageElement) return;
-    setIsDragging(true);
-    dragStartRef.current = {
-      x: e.clientX,
-      y: e.clientY,
-      panX: transform.panX,
-      panY: transform.panY,
-    };
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleCanvasMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !imageElement) return;
-    const dx = e.clientX - dragStartRef.current.x;
-    const dy = e.clientY - dragStartRef.current.y;
-    onTransformChange({
-      ...transform,
-      panX: dragStartRef.current.panX + dx,
-      panY: dragStartRef.current.panY + dy,
-    });
-  };
-
-  // Touch Support for Mobile Pan
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!imageElement || e.touches.length !== 1) return;
-    setIsDragging(true);
-    dragStartRef.current = {
-      x: e.touches[0].clientX,
-      y: e.touches[0].clientY,
-      panX: transform.panX,
-      panY: transform.panY,
-    };
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || !imageElement || e.touches.length !== 1) return;
-    const dx = e.touches[0].clientX - dragStartRef.current.x;
-    const dy = e.touches[0].clientY - dragStartRef.current.y;
-    onTransformChange({
-      ...transform,
-      panX: dragStartRef.current.panX + dx,
-      panY: dragStartRef.current.panY + dy,
-    });
-  };
-
-  // Mouse Wheel Zoom on Canvas
-  const handleWheel = (e: React.WheelEvent) => {
-    if (!imageElement) return;
-    e.preventDefault();
-    const delta = e.deltaY < 0 ? 0.05 : -0.05;
-    const newZoom = Math.min(3, Math.max(0.5, transform.zoom + delta));
-    onTransformChange({
-      ...transform,
-      zoom: newZoom,
-    });
   };
 
   // 1-Click High-Res PNG Download
   const handleDownload = async () => {
+    if (!captureRef.current) return;
     try {
       setDownloading(true);
       soundFx.playShutter();
 
-      // Create offscreen canvas rendered at 2x high resolution
-      const exportCanvas = document.createElement("canvas");
-      await renderGraphicToCanvas(exportCanvas, {
-        userData,
-        imageElement,
-        transform,
-        scale: 2, // crisp export
+      const dataUrl = await toPng(captureRef.current, {
+        cacheBust: true,
+        pixelRatio: 2, // High resolution
+        quality: 1.0,
       });
 
       const cleanName = (userData.name.trim() || "Hacker").replace(/[^a-zA-Z0-9]/g, "_");
@@ -185,7 +99,7 @@ export function CardPreview({
 
       const link = document.createElement("a");
       link.download = filename;
-      link.href = exportCanvas.toDataURL("image/png");
+      link.href = dataUrl;
       link.click();
 
       // Confetti celebration
@@ -206,25 +120,22 @@ export function CardPreview({
 
   // Copy Image to Clipboard
   const handleCopyImage = async () => {
+    if (!captureRef.current) return;
     try {
       soundFx.playClick();
-      const exportCanvas = document.createElement("canvas");
-      await renderGraphicToCanvas(exportCanvas, {
-        userData,
-        imageElement,
-        transform,
-        scale: 2,
+
+      const blob = await toBlob(captureRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
       });
 
-      exportCanvas.toBlob(async (blob) => {
-        if (blob && navigator.clipboard && navigator.clipboard.write) {
-          await navigator.clipboard.write([
-            new ClipboardItem({ "image/png": blob }),
-          ]);
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2500);
-        }
-      });
+      if (blob && navigator.clipboard && navigator.clipboard.write) {
+        await navigator.clipboard.write([
+          new ClipboardItem({ "image/png": blob }),
+        ]);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      }
     } catch (err) {
       console.warn("Clipboard copy failed, downloading instead:", err);
       handleDownload();
@@ -236,7 +147,7 @@ export function CardPreview({
     soundFx.playClick();
 
     const name = userData.name.trim() || "Anonymous Hacker";
-    const role = userData.role;
+    const role = userData.role || "Builder";
     const builderClass = userData.builderClass || "Ship or Die Specialist";
     const team = userData.isTeam && userData.teamName.trim() ? `Team: ${userData.teamName.trim()}` : "Solo Hacker";
 
@@ -251,6 +162,72 @@ export function CardPreview({
     window.open(shareUrl, "_blank", "width=600,height=500");
   };
 
+  const name = userData.name.trim() || "Anonymous Hacker";
+
+  // Split name for two-line display
+  const nameParts = name.split(" ");
+  const firstName = nameParts[0];
+  const restOfName = nameParts.slice(1).join(" ");
+  // Programmatic font size reduction using a non-linear (exponential decay) formula
+  const BASE_FONT_SIZE = 40; // Normal Font Size (Tweak this!)
+  const SHRINK_THRESHOLD = 12; // Start shrinking if a word is longer than 12 letters
+
+  const calculateFontSize = (text: string) => {
+    if (!text) return { fontSize: `${BASE_FONT_SIZE}px`, lineHeight: `${BASE_FONT_SIZE * 0.9}px` };
+    const len = text.length;
+    let size = BASE_FONT_SIZE;
+    if (len > SHRINK_THRESHOLD) {
+      const excess = len - SHRINK_THRESHOLD;
+      // Non-linear exponential decay: shrinks by 8% for every extra letter
+      // This means it shrinks faster and faster the longer the name gets!
+      size = Math.max(14, BASE_FONT_SIZE * Math.pow(0.92, excess));
+    }
+    return {
+      fontSize: `${size}px`,
+      lineHeight: `${size * 1.05}px`, // Increased line-height so descenders (g, y, j) don't get clipped
+    };
+  };
+
+  // Calculate size independently so a long second line doesn't shrink a short first line
+  const firstNameStyle = calculateFontSize(firstName);
+  const restOfNameStyle = calculateFontSize(restOfName);
+
+  const role = userData.role || "Builder";
+  const builderClass = userData.builderClass || "Ship or Die Specialist";
+
+  const teamLabel = (userData.isTeam && userData.teamName.trim()) ? "TEAM" : "STATUS";
+  const teamValue = (userData.isTeam && userData.teamName.trim()) ? userData.teamName.trim() : "SOLO";
+
+  // TWEAK THIS: Team text font sizing
+  const BASE_TEAM_FONT = 16; // Normal size for Team name
+  const TEAM_SHRINK_THRESHOLD = 8; // Starts shrinking after 8 characters
+
+  let teamFontSize = BASE_TEAM_FONT;
+  if (teamValue.length > TEAM_SHRINK_THRESHOLD) {
+    const excess = teamValue.length - TEAM_SHRINK_THRESHOLD;
+    // Shrinks by 5% per extra character
+    teamFontSize = Math.max(9, BASE_TEAM_FONT * Math.pow(0.95, excess));
+  }
+
+  // TWEAK THIS: Builder Title font sizing
+  const BASE_BUILDER_FONT = 20; // Increased from 16 to make it slightly bigger!
+  const BUILDER_SHRINK_THRESHOLD = 12; // Starts shrinking after 12 characters
+
+  let builderFontSize = BASE_BUILDER_FONT;
+  const builderClassStr = builderClass || "";
+  if (builderClassStr.length > BUILDER_SHRINK_THRESHOLD) {
+    const excess = builderClassStr.length - BUILDER_SHRINK_THRESHOLD;
+    // Shrinks by 2% per extra character (Less powerful scaling factor than the others)
+    builderFontSize = Math.max(10, BASE_BUILDER_FONT * Math.pow(0.98, excess));
+  }
+  if (userData.mode === "pfp") {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full min-h-[500px]">
+        {/* Empty as requested for Format A */}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center space-y-5">
       {/* 3D Interactive Tilt Card Container */}
@@ -259,43 +236,344 @@ export function CardPreview({
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="relative holo-card-container cursor-grab active:cursor-grabbing select-none"
+        className="relative holo-card-container select-none w-full max-w-[380px] sm:max-w-[420px]"
         style={{
           perspective: 1200,
+          aspectRatio: "420 / 630"
         }}
       >
         <div
-          className="relative holo-card-inner rounded-3xl overflow-hidden shadow-2xl transition-transform duration-100 ease-out"
+          className="relative holo-card-inner rounded-3xl overflow-hidden shadow-2xl transition-transform duration-100 ease-out w-full h-full"
           style={{
             transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) ${
               isHovered ? "scale3d(1.02, 1.02, 1.02)" : "scale3d(1, 1, 1)"
-            }`,
+              }`,
           }}
         >
-          {/* Main Canvas Display */}
-          <canvas
-            ref={canvasRef}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onMouseMove={handleCanvasMouseMove}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleMouseUp}
-            onWheel={handleWheel}
-            className={`w-full max-w-[380px] sm:max-w-[420px] h-auto block rounded-2xl border ${
-              userData.theme === "amber"
-                ? "border-amber-500/60 shadow-[0_0_30px_rgba(255,170,0,0.3)]"
-                : userData.theme === "green"
-                ? "border-emerald-500/60 shadow-[0_0_30px_rgba(0,255,102,0.3)]"
-                : userData.theme === "purple"
-                ? "border-purple-500/60 shadow-[0_0_30px_rgba(217,70,239,0.3)]"
-                : "border-cyan-500/60 shadow-[0_0_30px_rgba(0,240,255,0.3)]"
-            }`}
-          />
+          {/* Card Capture Area - Export happens on this node */}
+          <div
+            ref={captureRef}
+            className="relative bg-black w-full h-full overflow-hidden flex items-center justify-center rounded-2xl border border-white/10"
+          >
+            {/* Base SVG Background */}
+            <img
+              src="/card.svg"
+              alt="ID Card Background"
+              className="absolute top-0 left-0 w-full h-full object-cover z-0 pointer-events-none"
+            />
+
+            {/* Avatar / Profile Image Block */}
+            <div
+              className="absolute z-10"
+              style={{
+                // TWEAK THIS: Position of the Avatar Image Block on the card
+                top: "19.5%",
+                left: "50%",
+                transform: "translateX(-50%)", // Centers it horizontally
+
+                // TWEAK THIS: The size of the OUTER CIRCLE
+                width: "150px",
+                height: "150px",
+                // TWEAK THIS: The radius of the outer circle (50% makes it a perfect circle)
+                borderRadius: "100%",
+
+                // TWEAK THIS: Background color of the circle (visible behind the square)
+                background: "rgba(0, 0, 0, 1)",
+
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden", // Clips the corners of the square if it's too big!
+              }}
+            >
+              {/* The SQUARE inside the circle */}
+              <div
+                  style={{
+                    // TWEAK THIS: The size of the SQUARE inside the circle.
+                    // Note: If you make this larger than 127px, the corners will start getting clipped by the outer circle!
+                    width: "145px",
+                    height: "145px",
+
+                    // TWEAK THIS: The white border on the square (thickness, style, color)
+                    border: "4px solid #FFFFFF",
+
+                    overflow: "hidden", // Keeps the image strictly inside the square
+                    position: "relative",
+                    background: "#111", // Fallback background if no image is uploaded yet
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+              >
+                {imageSrc ? (
+                  <img
+                    src={imageSrc}
+                    alt="Uploaded Avatar"
+                    style={{
+                      width: isPortrait ? "100%" : "auto",
+                      height: isPortrait ? "auto" : "100%",
+                      objectFit: "cover", // Ensures the image fills the square
+                        // Applies the pan/zoom/rotate from the form controls
+                        transform: `translate(${transform.panX}px, ${transform.panY}px) scale(${transform.zoom}) rotate(${transform.rotate}deg)`,
+                        transformOrigin: "center center",
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-[#111]">
+                    <User className="w-16 h-16 text-white/20" strokeWidth={1.5} />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Dynamic Text Overlays using CSS Absolute Positioning */}
+
+            {/* Name and Builder Title Container (Figma spec + modifications) */}
+            <div
+              className="absolute z-10"
+              style={{
+                top: "48%",
+                left: "3%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                padding: "0px",
+                width: "auto", // Automatically expands horizontally up to max-width
+                maxWidth: "350px", // Threshold so it never expands off the 420px wide card
+                height: "auto",
+                gap: "6px", // Increased gap between name and role block
+                transform: "rotate(-1deg)",
+              }}
+            >
+              {/* Heading 1 (Name) */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  padding: "0px",
+                  width: "100%", // Take up available space horizontally
+                  flex: "none",
+                  order: 0,
+                  flexGrow: 0,
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "'Rubik', sans-serif",
+                    fontStyle: "normal",
+                    fontWeight: 900,
+                    letterSpacing: "-1.9px",
+                    color: "#000000",
+                    flex: "none",
+                    order: 0,
+                    flexGrow: 0,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    maxWidth: "100%",
+                    paddingRight: "8px", // Added padding so italic/slanted font doesn't clip
+                    paddingBottom: "8px", // Added so bottom letters like 'G' and 'y' don't clip
+                    paddingTop: "4px", // Added just to be safe for tall ascenders
+                  }}
+                >
+                  <div style={{ fontSize: firstNameStyle.fontSize, lineHeight: firstNameStyle.lineHeight }}>{firstName}</div>
+                  {restOfName && <div style={{ fontSize: restOfNameStyle.fontSize, lineHeight: restOfNameStyle.lineHeight }}>{restOfName}</div>}
+                </div>
+              </div>
+
+              {/* (Role / Stack Box) */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  // TWEAK THIS: Padding inside the yellow box (Top/Bottom, Left/Right). Increasing this makes the box thicker.
+                  padding: "4px 14px",
+
+                  // TWEAK THIS: This is the MAXIMUM size the box can stretch to before the text gets cut off with "..."
+                  maxWidth: "320px",
+                  width: "fit-content", // This tells the yellow box to automatically grow and shrink to hug the text exactly
+                  height: "auto",
+
+                  // TWEAK THIS: Background color
+                  background: "#FFF200",
+
+                  // TWEAK THIS: The drop shadow! (Currently black #000000, but you can change it to Pink #FF00A0 or anything else)
+                  boxShadow: "-5px 4px 0px #000000",
+
+                  flex: "none",
+                  order: 1,
+                  flexGrow: 0,
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "'Rubik', sans-serif",
+                    fontStyle: "normal",
+                    fontWeight: 700,
+
+                    // TWEAK THIS: The size of the text inside the yellow box! (I increased it from 13px to 16px)
+                    fontSize: "16px",
+                    lineHeight: "1.2",
+                    letterSpacing: "1.3px",
+                    textTransform: "uppercase",
+
+                    // TWEAK THIS: The color of the text (Currently Pink #FF00A0)
+                    color: "#FF00A0",
+
+                    flex: "none",
+                    order: 0,
+                    flexGrow: 0,
+                    textAlign: "center",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    width: "100%", // Ensures it respects the parent's max-width constraint
+                  }}
+                >
+                  {role}
+                </div>
+              </div>
+            </div>
+
+            {/* Builder Title Block (Figma spec + modifications) */}
+            <div
+              className="absolute z-10"
+              style={{
+                // TWEAK THIS: How far down from the top of the card (vertical distance)
+                top: "77.5%",
+                // TWEAK THIS: How far from the left edge of the card
+                left: "27%",
+
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start", // Aligns the text to the left inside the box
+
+                // TWEAK THIS: Padding (thickness) of the black box
+                padding: "8px 20px", // Slightly bigger padding
+
+                background: "#000000",
+                borderRadius: "3.5px",
+                transform: "rotate(-2deg)",
+
+                // Automatically expands horizontally from the center
+                width: "fit-content",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "flex-start",
+                  width: "100%",
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontWeight: 700,
+                    // Uses the new dynamic (less powerful) scaling factor from the top
+                    fontSize: `${builderFontSize}px`,
+                    lineHeight: "1.25",
+                    letterSpacing: "1.3px",
+                    textTransform: "uppercase",
+                    color: "#FFFFFF",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {builderClass}
+                </div>
+              </div>
+            </div>
+
+            {/* Team / Status Block (Figma spec + modifications) */}
+            <div
+              className="absolute z-10"
+              style={{
+                // TWEAK THIS: Position of the Team box. Placed on the right side.
+                top: "54%",
+                right: "3%",
+
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                padding: "5.25px 10.5px",
+
+                background: "#000000",
+                border: "2.133px solid #000000",
+                // TWEAK THIS: Pink Drop shadow for the team box
+                boxShadow: "3px 3px 0px #FF00A0",
+                transform: "rotate(2deg)",
+
+                // Allow the box to grow horizontally but limit it
+                maxWidth: "160px",
+                width: "fit-content",
+              }}
+            >
+              {/* Label (TEAM or STATUS) */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontWeight: 700,
+                    // TWEAK THIS: The size of the "TEAM" or "STATUS" label
+                    fontSize: "9px",
+                    lineHeight: "13px",
+                    textAlign: "center",
+                    letterSpacing: "0.9px",
+                    textTransform: "uppercase",
+                    color: "#99A1AF",
+                  }}
+                >
+                  {teamLabel}
+                </div>
+              </div>
+
+              {/* Value (Team Name or SOLO) */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  padding: "1.75px 0px 0px",
+                  width: "100%",
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontWeight: 700,
+                    // This uses the dynamic font size calculation from the top!
+                    fontSize: `${teamFontSize}px`,
+                    lineHeight: "1",
+                    textAlign: "center",
+                    color: "#FFF200",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    maxWidth: "100%",
+                  }}
+                >
+                  {teamValue}
+                </div>
+              </div>
+            </div>
+
+          </div>
 
           {/* Holographic Glare Overlay */}
           <div
-            className="holo-glare"
+            className="holo-glare absolute inset-0 z-20 pointer-events-none"
             style={
               {
                 "--mouse-x": `${glarePos.x}%`,
@@ -304,12 +582,6 @@ export function CardPreview({
               } as React.CSSProperties
             }
           />
-        </div>
-
-        {/* Floating Pan Indicator */}
-        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-zinc-950/90 border border-zinc-700/80 text-[10px] font-mono text-zinc-300 flex items-center gap-1.5 shadow-lg backdrop-blur-md">
-          <Move className="h-3 w-3 text-cyan-400" />
-          <span>DRAG CANVAS TO PAN · SCROLL TO ZOOM</span>
         </div>
       </div>
 
@@ -363,14 +635,6 @@ export function CardPreview({
               </>
             )}
           </button>
-        </div>
-
-        {/* Requirements Banner Reminder */}
-        <div className="p-3 rounded-xl bg-zinc-950/60 border border-zinc-800 text-[11px] font-mono text-zinc-400 text-center space-y-1">
-          <p className="text-zinc-300">
-            ⚠ <span className="text-amber-400 font-bold">Important:</span> Include{" "}
-            <span className="text-cyan-400 font-semibold">#FrameInGoa</span> when posting on X for official shortlisting validation!
-          </p>
         </div>
       </div>
     </div>
