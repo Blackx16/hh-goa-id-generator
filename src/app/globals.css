@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Imbue:opsz,wght@10..20,100..900&family=Victor+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+:root {
+  /* HH Goa Brand Palette — strictly 5 colors */
+  --hhgoa-green:   #0b6839;
+  --hhgoa-yellow:  #fee101;
+  --hhgoa-pink:    #ff0080;
+  --hhgoa-white:   #ffffff;
+  --hhgoa-cream:   #fffbe8;
+  --hhgoa-black:   #000000;
+
+  /* Semantic aliases */
+  --background:    #0b6839;
+  --foreground:    #ffffff;
+  --card-bg:       #fffbe8;
+  --accent:        #fee101;
+  --accent-hot:    #ff0080;
+}
+
+body {
+  background-color: var(--hhgoa-green);
+  color: var(--hhgoa-white);
+  font-family: 'Victor Mono', 'Courier New', monospace;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--hhgoa-yellow);
+  color: var(--hhgoa-black);
+}
+
+/* Scrollbar — tropical green */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #094f2b; }
+::-webkit-scrollbar-thumb { background: #fee101; border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: #ff0080; }
+
+/* ═══════════════════════════════════════
+   CTA BUTTON — Yellow, square corners, glow
+═══════════════════════════════════════ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background-color: var(--hhgoa-yellow);
+  color: var(--hhgoa-black);
+  border-radius: 0px;           /* SQUARE — the HH Goa signature */
+  font-family: 'Victor Mono', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  animation: ctaGlow 2.5s ease-in-out infinite;
+}
+
+.btn-primary:hover { opacity: 0.9; }
+
+@keyframes ctaGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(254,225,1,0.6), 0 0 20px rgba(254,225,1,0.3); }
+  50%       { box-shadow: 0 0 18px rgba(254,225,1,0.9), 0 0 40px rgba(254,225,1,0.5); }
+}
+
+/* ═══════════════════════════════════════
+   PILL BUTTON — Hot pink, Imbue
+═══════════════════════════════════════ */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 14px;
+  background-color: var(--hhgoa-pink);
+  color: var(--hhgoa-white);
+  border-radius: 9999px;
+  font-family: 'Imbue', Georgia, serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.btn-pill:hover { opacity: 0.85; }
+
+/* ═══════════════════════════════════════
+   CARD — Cream bg, hard offset shadow
+═══════════════════════════════════════ */
+.hhgoa-card {
+  background-color: var(--hhgoa-cream);
+  color: var(--hhgoa-black);
+  border-radius: 4px;
+  box-shadow: 6px 8px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* ═══════════════════════════════════════
+   INPUTS — styled for green bg
+═══════════════════════════════════════ */
+.hhgoa-input {
+  width: 100%;
+  padding: 10px 14px;
+  background-color: rgba(0,0,0,0.25);
+  border: 1.5px solid rgba(254,225,1,0.4);
+  border-radius: 0px;
+  color: var(--hhgoa-white);
+  font-family: 'Victor Mono', monospace;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.hhgoa-input::placeholder { color: rgba(255,255,255,0.4); }
+.hhgoa-input:focus { border-color: var(--hhgoa-yellow); }
+
+/* ═══════════════════════════════════════
+   SECTION LABEL — Victor Mono, 0.1em tracking
+═══════════════════════════════════════ */
+.section-label {
+  font-family: 'Victor Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hhgoa-yellow);
+}
+
+/* ═══════════════════════════════════════
+   MARQUEE TICKER
+═══════════════════════════════════════ */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ═══════════════════════════════════════
+   DIVIDER — repeating × pattern in yellow
+═══════════════════════════════════════ */
+.hhgoa-divider {
+  width: 100%;
+  text-align: center;
+  font-family: 'Victor Mono', monospace;
+  font-size: 10px;
+  color: var(--hhgoa-yellow);
+  letter-spacing: 0.3em;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════
+   HEADING FONT
+═══════════════════════════════════════ */
+.font-imbue {
+  font-family: 'Imbue', Georgia, serif;
+}
+
+.font-victor {
+  font-family: 'Victor Mono', 'Courier New', monospace;
+}
+
+/* Status dot pulse */
+.live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--hhgoa-yellow);
+  border-radius: 50%;
+  animation: livePulse 1.4s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Range input accent */
+input[type="range"] {
+  accent-color: var(--hhgoa-yellow);
+}
