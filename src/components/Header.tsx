@@ -56,8 +56,8 @@ export function Header() {
             rel="noopener noreferrer"
             className="flex items-center gap-3 group hover:opacity-90 transition-opacity"
           >
-            <div className="font-heading font-black text-hhgoa-white text-lg leading-none uppercase tracking-wide hidden sm:block pt-1">
-              247PM STUDIO
+            <div className="font-heading font-black text-hhgoa-yellow text-lg leading-none tracking-wide hidden sm:block pt-1">
+              2:47 PM Studio
             </div>
           </a>
         </div>

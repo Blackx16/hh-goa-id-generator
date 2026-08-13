@@ -38,6 +38,39 @@ export function CardPreview({
   const [glarePos, setGlarePos] = useState({ x: 50, y: 50 });
   const [isHovered, setIsHovered] = useState(false);
   const [dimensions, setDimensions] = useState<{w: number, h: number} | null>(null);
+  
+  // PFP Mode Drag State
+  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    if (!dragStart || userData.mode !== "pfp") return;
+    const handleMouseMove = (e: MouseEvent | TouchEvent) => {
+      if (e.cancelable && 'touches' in e) e.preventDefault(); // Prevent scrolling on touch
+      const clientX = 'touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : (e as MouseEvent).clientY;
+      
+      const dx = (clientX - dragStart.x) / (transform.zoom * (210 / 145));
+      const dy = (clientY - dragStart.y) / (transform.zoom * (210 / 145));
+      
+      onTransformChange({
+        ...transform,
+        panX: transform.panX + dx,
+        panY: transform.panY + dy,
+      });
+      setDragStart({ x: clientX, y: clientY });
+    };
+    const handleMouseUp = () => setDragStart(null);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleMouseMove, { passive: false });
+    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("touchend", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchend", handleMouseUp);
+    };
+  }, [dragStart, transform, onTransformChange, userData.mode]);
 
   useEffect(() => {
     if (!imageSrc) {
@@ -90,7 +123,7 @@ export function CardPreview({
 
       const dataUrl = await toPng(captureRef.current, {
         cacheBust: true,
-        pixelRatio: 2, // High resolution
+        pixelRatio: userData.mode === "pfp" ? 4 : 2, // High resolution
         quality: 1.0,
       });
 
@@ -126,7 +159,7 @@ export function CardPreview({
 
       const blob = await toBlob(captureRef.current, {
         cacheBust: true,
-        pixelRatio: 2,
+        pixelRatio: userData.mode === "pfp" ? 4 : 2,
       });
 
       if (blob && navigator.clipboard && navigator.clipboard.write) {
@@ -222,27 +255,95 @@ export function CardPreview({
   }
   if (userData.mode === "pfp") {
     return (
-      <div className="flex flex-col items-center justify-center space-y-5 w-full">
-        {/* Invisible high-res capture node for PFP export */}
+      <div className="flex flex-col items-center justify-center gap-10 w-full h-full min-h-[60vh] lg:min-h-[70vh]">
+        
+        {/* VISIBLE high-res capture node for PFP export */}
         <div 
           ref={captureRef}
-          className="absolute -z-50 opacity-0 pointer-events-none"
-          style={{ width: "1000px", height: "1000px", borderRadius: "100%", overflow: "hidden", background: "transparent" }}
+          className="relative flex items-center justify-center shrink-0"
+          style={{ width: "320px", height: "320px" }}
         >
-          {imageSrc ? (
-            <img
-              src={imageSrc}
+          {/* Outer Decorative Ring */}
+          <img
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/profile_picture_container_pink.svg`}
+            alt=""
+            className="absolute top-0 left-0 w-full h-full pointer-events-none"
+            style={{ zIndex: 0 }}
+          />
+
+          {/* Inner Circle with Dragging */}
+          <div 
+            className="relative flex flex-col items-center justify-center shrink-0 overflow-hidden cursor-move"
+            style={{ width: "220px", height: "220px", borderRadius: "100%", background: "#000", touchAction: "none", zIndex: 1 }}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              setDragStart({ x: e.clientX, y: e.clientY });
+            }}
+            onTouchStart={(e) => {
+              setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+            }}
+          >
+            {/* Inner White Square */}
+            <div
               style={{
-                width: isPortrait ? "100%" : "auto",
-                height: isPortrait ? "auto" : "100%",
-                objectFit: "cover",
-                transform: `translate(${transform.panX * (1000/145)}px, ${transform.panY * (1000/145)}px) scale(${transform.zoom}) rotate(${transform.rotate}deg)`,
-                transformOrigin: "center center",
+                width: "210px",
+                height: "210px",
+                border: "6px solid #FFFFFF",
+                overflow: "hidden", 
+                position: "relative",
+                background: "#111",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
+            >
+              {imageSrc && (
+                <img
+                  src={imageSrc}
+                  style={{
+                    width: isPortrait ? "100%" : "auto",
+                    height: isPortrait ? "auto" : "100%",
+                    objectFit: "cover",
+                    transform: `translate(${transform.panX * (210/145)}px, ${transform.panY * (210/145)}px) scale(${transform.zoom}) rotate(${transform.rotate}deg)`,
+                    transformOrigin: "center center",
+                  }}
+                  draggable={false}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* OVERLAYS FOR PFP (Tweakable positioning) */}
+          <div 
+            className="absolute pointer-events-none z-10 flex items-center justify-center" 
+            style={{ 
+              top: "20px",    // TWEAK THIS: Adjust distance from top
+              left: "35px",   // TWEAK THIS: Adjust distance from left
+            }}
+          >
+            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/hacker-house.png`} alt="Hacker House" style={{ width: "120px" }} />
+            <img 
+              src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/goa-hindi.svg`} 
+              alt="Goa" 
+              className="absolute" 
+              style={{ 
+                width: "25px", 
+                zIndex: 1,
+                marginTop: "30px", // TWEAK THIS: Shift Goa up/down (negative goes up, positive goes down)
+                transform: "rotate(-18deg)", // TWEAK THIS: Angle of Goa text (negative is left, positive is right)
+              }} 
             />
-          ) : (
-            <div style={{ width: "100%", height: "100%", background: "#111" }} />
-          )}
+          </div>
+          
+          <div 
+            className="absolute flex items-center justify-center pointer-events-none z-10"
+            style={{
+              bottom: "20px", // TWEAK THIS: Adjust distance from bottom
+              right: "50px",  // TWEAK THIS: Adjust distance from right
+            }}
+          >
+            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/2-47.svg`} alt="247PM Studio" style={{ width: "60px" }} />
+          </div>
         </div>
         
         <div className="w-full flex flex-col gap-3 mt-4">
@@ -250,23 +351,29 @@ export function CardPreview({
             type="button"
             onClick={handleDownload}
             disabled={downloading || !imageSrc}
-            className="w-full py-4 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-cyan-950 font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(34,211,238,0.4)] hover:shadow-[0_0_30px_rgba(34,211,238,0.6)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="relative overflow-hidden w-full py-4 bg-[#ff0080] hover:bg-[#e60073] text-hhgoa-yellow font-bold text-sm flex items-center justify-center transition-transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ borderRadius: 0 }}
           >
-            {downloading ? (
-              <span className="animate-pulse">GENERATING PFP...</span>
-            ) : (
-              <>
-                <Download className="h-5 w-5" />
-                <span>DOWNLOAD HIGH-RES PFP</span>
-              </>
-            )}
+            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/border-decorations-3.svg`} className="absolute top-0 left-0 w-full opacity-90" style={{ height: "4px", objectFit: "cover" }} />
+            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/border-decorations-3.svg`} className="absolute bottom-0 left-0 w-full opacity-90" style={{ height: "4px", objectFit: "cover", transform: "scaleY(-1)" }} />
+            
+            <div className="relative z-10 flex items-center gap-2">
+              {downloading ? (
+                <span className="animate-pulse">GENERATING PFP...</span>
+              ) : (
+                <>
+                  <Download className="h-5 w-5" />
+                  <span>Download high-res graphic PNG</span>
+                </>
+              )}
+            </div>
           </button>
           
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
               onClick={handleShareToX}
-              className="py-3 px-4 rounded-xl bg-[#1DA1F2]/10 border border-[#1DA1F2]/30 hover:bg-[#1DA1F2]/20 text-[#1DA1F2] font-bold text-xs flex items-center justify-center gap-2 transition-all group"
+              className="py-3 px-4 rounded-xl bg-black border border-white/10 hover:border-hhgoa-yellow/50 text-hhgoa-yellow font-bold text-xs flex items-center justify-center gap-2 transition-all group"
             >
               <Share2 className="h-4 w-4 group-hover:scale-110 transition-transform" />
               <span>SHARE TO X</span>
@@ -274,14 +381,14 @@ export function CardPreview({
             <button
               type="button"
               onClick={handleCopyImage}
-              className="py-3 px-4 rounded-xl bg-zinc-900 border border-zinc-700 hover:border-cyan-400 text-white font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all group"
+              className="py-3 px-4 rounded-xl bg-black border border-white/10 hover:border-hhgoa-yellow/50 text-hhgoa-yellow font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all group"
             >
               {copied ? (
                 <span className="text-emerald-400">COPIED!</span>
               ) : (
                 <>
-                  <Copy className="h-4 w-4 text-cyan-400 group-hover:scale-110 transition-transform" />
-                  <span>COPY</span>
+                  <Copy className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                  <span>COPY IMAGE</span>
                 </>
               )}
             </button>
@@ -654,19 +761,25 @@ export function CardPreview({
           type="button"
           onClick={handleDownload}
           disabled={downloading}
-          className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-600 hover:from-cyan-300 hover:via-sky-400 hover:to-blue-500 text-black font-mono font-black text-sm tracking-wide flex items-center justify-center gap-2.5 shadow-[0_0_25px_rgba(0,240,255,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="relative overflow-hidden w-full py-4 bg-[#ff0080] hover:bg-[#e60073] text-hhgoa-yellow font-bold text-sm flex items-center justify-center transition-transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ borderRadius: 0 }}
         >
-          {downloading ? (
-            <>
-              <div className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-              <span>EXPORTING HIGH-RES PNG...</span>
-            </>
-          ) : (
-            <>
-              <Download className="h-5 w-5" />
-              <span>DOWNLOAD HIGH-RES GRAPHIC (PNG)</span>
-            </>
-          )}
+          <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/border-decorations-3.svg`} className="absolute top-0 left-0 w-full opacity-90" style={{ height: "4px", objectFit: "cover" }} />
+          <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/border-decorations-3.svg`} className="absolute bottom-0 left-0 w-full opacity-90" style={{ height: "4px", objectFit: "cover", transform: "scaleY(-1)" }} />
+          
+          <div className="relative z-10 flex items-center gap-2">
+            {downloading ? (
+              <>
+                <div className="h-4 w-4 border-2 border-hhgoa-yellow border-t-transparent rounded-full animate-spin" />
+                <span>GENERATING BADGE...</span>
+              </>
+            ) : (
+              <>
+                <Download className="h-5 w-5" />
+                <span>Download high-res graphic PNG</span>
+              </>
+            )}
+          </div>
         </button>
 
         {/* Share to X & Copy Image Row */}
@@ -674,25 +787,22 @@ export function CardPreview({
           <button
             type="button"
             onClick={handleShareToX}
-            className="py-3 px-4 rounded-xl bg-zinc-900 border border-zinc-700 hover:border-[#1DA1F2] hover:bg-[#1DA1F2]/10 text-white font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all group"
+            className="py-3 px-4 rounded-xl bg-black border border-white/10 hover:border-hhgoa-yellow/50 text-hhgoa-yellow font-bold text-xs flex items-center justify-center gap-2 transition-all group"
           >
-            <Share2 className="h-4 w-4 text-[#1DA1F2] group-hover:scale-110 transition-transform" />
-            <span>SHARE TO X (#FrameInGoa)</span>
+            <Share2 className="h-4 w-4 group-hover:scale-110 transition-transform" />
+            <span>SHARE TO X</span>
           </button>
 
           <button
             type="button"
             onClick={handleCopyImage}
-            className="py-3 px-4 rounded-xl bg-zinc-900 border border-zinc-700 hover:border-cyan-400 hover:bg-cyan-950/20 text-white font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all group"
+            className="py-3 px-4 rounded-xl bg-black border border-white/10 hover:border-hhgoa-yellow/50 text-hhgoa-yellow font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all group"
           >
             {copied ? (
-              <>
-                <Check className="h-4 w-4 text-emerald-400" />
-                <span className="text-emerald-400">COPIED TO CLIPBOARD!</span>
-              </>
+              <span className="text-emerald-400">COPIED!</span>
             ) : (
               <>
-                <Copy className="h-4 w-4 text-cyan-400 group-hover:scale-110 transition-transform" />
+                <Copy className="h-4 w-4 group-hover:scale-110 transition-transform" />
                 <span>COPY IMAGE</span>
               </>
             )}

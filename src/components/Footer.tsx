@@ -48,7 +48,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => soundFx.playClick()}
-                  className="footer-link-glow flex items-center gap-1.5 text-hhgoa-white/60 transition-all"
+                  className="footer-link-glow flex items-center gap-1.5 text-hhgoa-white/60 hover:text-hhgoa-yellow hover:-translate-y-1 hover:drop-shadow-[0_0_8px_rgba(254,225,1,0.8)] transition-all duration-300"
                 >
                   <ExternalLink className="h-3 w-3 shrink-0" />
                   {link.label}
@@ -70,7 +70,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => soundFx.playClick()}
-              className="footer-link-glow block text-hhgoa-white/60 transition-all"
+              className="footer-link-glow block text-hhgoa-white/60 hover:text-hhgoa-yellow hover:-translate-y-1 hover:drop-shadow-[0_0_8px_rgba(254,225,1,0.8)] transition-all duration-300"
             >
               X: @247pmstudio
             </a>
@@ -79,7 +79,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => soundFx.playClick()}
-              className="footer-link-glow block text-hhgoa-white/60 transition-all"
+              className="footer-link-glow block text-hhgoa-white/60 hover:text-hhgoa-yellow hover:-translate-y-1 hover:drop-shadow-[0_0_8px_rgba(254,225,1,0.8)] transition-all duration-300"
             >
               Telegram: @twofourtysevenpm
             </a>

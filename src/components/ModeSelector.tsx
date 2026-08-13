@@ -33,9 +33,6 @@ export function ModeSelector({
   return (
     <div className="space-y-4">
 
-      {/* Section header */}
-      <div className="section-label text-hhgoa-green">FORMAT & THEME</div>
-
       {/* Format Toggle */}
       <div className="grid grid-cols-2 gap-2 p-1" style={{
         background: "#0b6839",
@@ -87,42 +84,6 @@ export function ModeSelector({
           );
         })}
       </div>
-
-      {/* PFP Style (badge mode only) */}
-      {mode === "pfp" && (
-        <div className="hhgoa-card p-4 space-y-3" style={{ animation: "fadeIn 0.25s ease" }}>
-          <div className="section-label text-hhgoa-green">PFP OVERLAY FRAME STYLE</div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {[
-              { id: "cyber-ring",        label: "Cyber Ring" },
-              { id: "hexagon-shield",    label: "Hexagon" },
-              { id: "terminal-minimal",  label: "Terminal" },
-              { id: "holographic-wave",  label: "Holo Wave" },
-            ].map((st) => {
-              const isSelected = pfpStyle === st.id;
-              return (
-                <button
-                  key={st.id}
-                  type="button"
-                  onClick={() => handlePfpStyle(st.id as PfpStyle)}
-                  className={`py-2 px-2 font-body text-xs font-bold uppercase tracking-wider transition-all ${
-                    isSelected
-                      ? "bg-hhgoa-green text-hhgoa-white"
-                      : "bg-hhgoa-cream border border-hhgoa-black/15 text-hhgoa-black/60 hover:text-hhgoa-black"
-                  }`}
-                  style={{
-                    borderRadius: 0,
-                    boxShadow: isSelected ? "3px 4px 0 rgba(0,0,0,0.2)" : "none",
-                  }}
-                >
-                  {st.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

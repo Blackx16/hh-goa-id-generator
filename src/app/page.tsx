@@ -126,11 +126,6 @@ export default function Home() {
         <section className="bg-hhgoa-cream py-10 px-6">
           <div className="max-w-[1060px] mx-auto">
 
-            {/* Section label */}
-            <div className="mb-6">
-              <div className="section-label text-hhgoa-green">PINNED UP · BUILD YOUR BADGE</div>
-            </div>
-
             {/* 2-Column Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
@@ -147,6 +142,7 @@ export default function Home() {
                   onImageChange={handleImageChange}
                   transform={transform}
                   onTransformChange={handleTransformChange}
+                  mode={userData.mode}
                 />
                 <FormControls
                   userData={userData}

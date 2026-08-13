@@ -98,26 +98,21 @@ export const STACK_SUGGESTIONS = [
 ];
 
 export const BUILDER_CLASSES = [
-  "Caffeine-Powered 10x Architect",
-  "Zero-Knowledge Necromancer",
-  "Bytecode Whisperer",
-  "Ship or Die Specialist",
-  "Chaos Monkey Wrangler",
-  "Prompt Synthesizer & AI Druid",
+  "10x Architect",
+  "Necromancer",
+  "Whisperer",
+  "Specialist",
   "Kernel Cowboy & Pointer Juggler",
   "Terminal Hermit & Git Wizard",
   "Fullstack Alchemist",
   "Sub-Millisecond Optimizer",
   "Gas-Fee Exorcist",
-  "State-Machine Sorcerer",
-  "Lego-Stack Composability King",
-  "Dark-Mode Evangelist",
-  "Pixel-Perfect Zealot",
-  "Consensus Layer Crusader",
-  "Async/Await Conqueror",
-  "Bug Hunter & Fixer Deity",
-  "Midnight Committer",
-  "Ocean-Side Fiber Junkie",
+  "Professional Smoker",
+  "Electricity bill Increaser",
+  "Clanker Enthusiast.",
+  "Computer Person",
+  "Guy.",
+  "Back-end specialist 😏",
 ];
 
 export const SAMPLE_AVATARS = [

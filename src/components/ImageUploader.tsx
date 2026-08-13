@@ -15,6 +15,7 @@ interface ImageUploaderProps {
   onImageChange: (src: string | null) => void;
   transform: ImageTransform;
   onTransformChange: (transform: ImageTransform) => void;
+  mode?: GeneratorMode;
 }
 
 export function ImageUploader({
@@ -22,6 +23,7 @@ export function ImageUploader({
   onImageChange,
   transform,
   onTransformChange,
+  mode,
 }: ImageUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -183,72 +185,74 @@ export function ImageUploader({
         /* Image Controls */
         <div className="flex flex-col sm:flex-row gap-4 p-3 bg-hhgoa-green/8 border border-hhgoa-black/10 items-center sm:items-start">
           
-          {/* Wrapper for SVG Decoration and Preview Circle */}
-          <div className="relative flex items-center justify-center shrink-0" style={{ width: "220px", height: "220px" }}>
-            
-            {/* Profile Picture Container SVG (Background) */}
-            <img
-              src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/profile_picture_container.svg`}
-              alt="Profile Container Decoration"
-              className="absolute"
-              style={{
-                width: "100%", 
-                height: "100%",
-                zIndex: 0,
-                pointerEvents: "none",
-              }}
-            />
-
-            {/* Draggable Preview Circle (Matches CardPreview exactly) */}
-            <div 
-              className="relative shrink-0 flex flex-col items-center justify-center bg-black cursor-move"
-              style={{ 
-                width: "150px", 
-                height: "150px", 
-                touchAction: "none",
-                borderRadius: "100%",
-                overflow: "hidden",
-                zIndex: 1,
-              }}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                setDragStart({ x: e.clientX, y: e.clientY });
-              }}
-              onTouchStart={(e) => {
-                e.preventDefault();
-                setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
-              }}
-            >
-            {/* The SQUARE inside the circle */}
-            <div
-              style={{
-                width: "145px",
-                height: "145px",
-                border: "4px solid #FFFFFF",
-                overflow: "hidden", 
-                position: "relative",
-                background: "#111",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+          {/* Hide preview circle if in PFP mode (to avoid double preview) */}
+          {mode !== "pfp" && (
+            <div className="relative flex items-center justify-center shrink-0" style={{ width: "220px", height: "220px" }}>
+              
+              {/* Profile Picture Container SVG (Background) */}
               <img
-                src={imageSrc}
-                alt="Preview"
-                className="absolute pointer-events-none select-none max-w-none"
-                draggable={false}
+                src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/profile_picture_container.svg`}
+                alt="Profile Container Decoration"
+                className="absolute"
                 style={{
-                  width: isPortrait ? "100%" : "auto",
-                  height: isPortrait ? "auto" : "100%",
-                  objectFit: "cover",
-                  transform: `translate(${transform.panX}px, ${transform.panY}px) scale(${transform.zoom}) rotate(${transform.rotate}deg)`,
-                  transformOrigin: "center center",
+                  width: "100%", 
+                  height: "100%",
+                  zIndex: 0,
+                  pointerEvents: "none",
                 }}
               />
+
+              {/* Draggable Preview Circle */}
+              <div 
+                className="relative shrink-0 flex flex-col items-center justify-center bg-black cursor-move"
+                style={{ 
+                  width: "150px", 
+                  height: "150px", 
+                  touchAction: "none",
+                  borderRadius: "100%",
+                  overflow: "hidden",
+                  zIndex: 1,
+                }}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  setDragStart({ x: e.clientX, y: e.clientY });
+                }}
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+                }}
+              >
+              {/* The SQUARE inside the circle */}
+              <div
+                style={{
+                  width: "145px",
+                  height: "145px",
+                  border: "4px solid #FFFFFF",
+                  overflow: "hidden", 
+                  position: "relative",
+                  background: "#111",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src={imageSrc}
+                  alt="Preview"
+                  className="absolute pointer-events-none select-none max-w-none"
+                  draggable={false}
+                  style={{
+                    width: isPortrait ? "100%" : "auto",
+                    height: isPortrait ? "auto" : "100%",
+                    objectFit: "cover",
+                    transform: `translate(${transform.panX}px, ${transform.panY}px) scale(${transform.zoom}) rotate(${transform.rotate}deg)`,
+                    transformOrigin: "center center",
+                  }}
+                />
+              </div>
             </div>
-          </div>
-          </div>
+            </div>
+          )}
 
           <div className="space-y-3 flex-1 w-full">
           {/* Zoom */}
