@@ -372,6 +372,7 @@ export function CardPreview({
                   </div>
                 )}
               </div>
+            </div>
 
             {/* Dynamic Text Overlays using CSS Absolute Positioning */}
 
