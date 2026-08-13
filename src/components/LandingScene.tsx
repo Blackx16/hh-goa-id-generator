@@ -193,7 +193,7 @@ export function LandingScene({ onEnter }: LandingSceneProps) {
         {/* ── Center content (logos + buttons) ── */}
         <div className={cls("landing-logo-container landing-exit-up", exiting && "exiting")}>
           <img
-            src="/landing/hacker-house.png"
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/hacker-house.png`}
             alt="Hacker House"
             className={cls(
               "landing-hh-logo",
@@ -202,7 +202,7 @@ export function LandingScene({ onEnter }: LandingSceneProps) {
             draggable={false}
           />
           <img
-            src="/landing/goa-hindi.svg"
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/goa-hindi.svg`}
             alt="गोवा Goa"
             className={cls(
               "landing-goa-logo",
@@ -267,7 +267,7 @@ export function LandingScene({ onEnter }: LandingSceneProps) {
 
         {/* ── Trees ── */}
         <img
-          src="/landing/trees_left.svg?v=2"
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/trees_left.svg?v=2`}
           alt=""
           className={cls(
             "landing-trees-left",
@@ -279,7 +279,7 @@ export function LandingScene({ onEnter }: LandingSceneProps) {
           style={{ objectFit: "contain", objectPosition: "bottom left" }}
         />
         <img
-          src="/landing/trees_right.svg?v=2"
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/trees_right.svg?v=2`}
           alt=""
           className={cls(
             "landing-trees-right",

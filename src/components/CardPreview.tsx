@@ -257,7 +257,7 @@ export function CardPreview({
           >
             {/* Base SVG Background */}
             <img
-              src="/card.svg"
+              src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/card.svg`}
               alt="ID Card Background"
               className="absolute top-0 left-0 w-full h-full object-cover z-0 pointer-events-none"
             />
