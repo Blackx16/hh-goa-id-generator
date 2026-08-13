@@ -184,11 +184,11 @@ export function CardPreview({
     const builderClass = userData.builderClass || "Ship or Die Specialist";
     const team = userData.isTeam && userData.teamName.trim() ? `Team: ${userData.teamName.trim()}` : "Solo Hacker";
 
-    const tweetText = `Locked in for Hacker House Goa 2026! 🌊🌴\n\n👤 ${name}\n🚀 ${builderClass} | ${role}\n⚡ ${team}\n\nGenerated my official badge with #FrameInGoa 👇\n`;
+    const tweetText = `Locked in for Hacker House Goa 2026! 🌊🌴\n\n👤 ${name}\n🚀 ${role}\n⚡ ${builderClass}\n\nGenerated my official badge with #FrameInGoa 👇\n`;
 
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       tweetText
-    )}&url=${encodeURIComponent("https://hhgoa.com/")}&hashtags=${encodeURIComponent(
+    )}&url=${encodeURIComponent("https://blackx16.github.io/hh-goa-id-generator/")}&hashtags=${encodeURIComponent(
       "FrameInGoa,HackerHouseGoa,HHGoa2026"
     )}`;
 
