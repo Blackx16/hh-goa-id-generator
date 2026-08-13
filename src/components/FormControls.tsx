@@ -60,7 +60,7 @@ export function FormControls({ userData, onChange }: FormControlsProps) {
             onChange({ name: val });
           }}
           className="hhgoa-input text-hhgoa-black bg-hhgoa-cream border-hhgoa-green/30 placeholder:text-hhgoa-black/30 focus:border-hhgoa-green"
-          style={{ color: "#000", backgroundColor: "rgba(11,104,57,0.06)" }}
+          style={{ color: "#000", backgroundColor: "var(--hhgoa-cream)" }}
         />
       </div>
 
@@ -101,10 +101,10 @@ export function FormControls({ userData, onChange }: FormControlsProps) {
             maxLength={20}
             placeholder="Enter Team Name (e.g. ByteBrigade)"
             onChange={(e) => onChange({ teamName: e.target.value })}
-            className="hhgoa-input text-xs"
+            className="hhgoa-input text-xs bg-hhgoa-cream"
             style={{
               color: "#000",
-              backgroundColor: "rgba(11,104,57,0.06)",
+              backgroundColor: "var(--hhgoa-cream)",
               borderColor: "#ff0080",
             }}
           />
@@ -123,7 +123,7 @@ export function FormControls({ userData, onChange }: FormControlsProps) {
           placeholder="e.g. Backend Specialist"
           onChange={(e) => onChange({ role: e.target.value })}
           className="hhgoa-input text-hhgoa-black bg-hhgoa-cream border-hhgoa-green/30 placeholder:text-hhgoa-black/30 focus:border-hhgoa-green"
-          style={{ color: "#000", backgroundColor: "rgba(11,104,57,0.06)" }}
+          style={{ color: "#000", backgroundColor: "var(--hhgoa-cream)" }}
         />
       </div>
 
@@ -148,10 +148,10 @@ export function FormControls({ userData, onChange }: FormControlsProps) {
           maxLength={36} // TWEAK THIS: Set your own maximum character limit for Builder Title here
           placeholder="e.g. Zero-Knowledge Necromancer"
           onChange={(e) => onChange({ builderClass: e.target.value })}
-          className="hhgoa-input text-xs"
+          className="hhgoa-input text-xs bg-hhgoa-cream"
           style={{
             color: "#000",
-            backgroundColor: "rgba(255,0,128,0.05)",
+            backgroundColor: "var(--hhgoa-cream)",
             borderColor: "rgba(255,0,128,0.4)",
           }}
         />

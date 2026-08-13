@@ -270,22 +270,45 @@ export function CardPreview({
                 top: "19.5%",
                 left: "50%",
                 transform: "translateX(-50%)", // Centers it horizontally
-
-                // TWEAK THIS: The size of the OUTER CIRCLE
-                width: "150px",
-                height: "150px",
-                // TWEAK THIS: The radius of the outer circle (50% makes it a perfect circle)
-                borderRadius: "100%",
-
-                // TWEAK THIS: Background color of the circle (visible behind the square)
-                background: "rgba(0, 0, 0, 1)",
-
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                overflow: "hidden", // Clips the corners of the square if it's too big!
               }}
             >
+              {/* Profile Picture Container SVG (Background) */}
+              <img
+                src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/profile_picture_container.svg`}
+                alt="Profile Container Decoration"
+                className="absolute"
+                style={{
+                  // TWEAK THIS: Size of the background SVG container decoration
+                  width: "220px", 
+                  height: "220px",
+                  zIndex: 0,
+                  pointerEvents: "none",
+                }}
+              />
+
+              {/* The Actual Avatar Circle (Foreground) */}
+              <div
+                style={{
+                  // TWEAK THIS: The size of the OUTER CIRCLE
+                  width: "150px",
+                  height: "150px",
+                  // TWEAK THIS: The radius of the outer circle (50% makes it a perfect circle)
+                  borderRadius: "100%",
+
+                  // TWEAK THIS: Background color of the circle (visible behind the square)
+                  background: "rgba(0, 0, 0, 1)",
+
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden", // Clips the corners of the square if it's too big!
+                  position: "relative",
+                  zIndex: 1,
+                }}
+              >
               {/* The SQUARE inside the circle */}
               <div
                   style={{
@@ -325,6 +348,7 @@ export function CardPreview({
                 )}
               </div>
             </div>
+          </div>
 
             {/* Dynamic Text Overlays using CSS Absolute Positioning */}
 

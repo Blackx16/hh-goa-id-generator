@@ -183,19 +183,43 @@ export function ImageUploader({
         /* Image Controls */
         <div className="flex flex-col sm:flex-row gap-4 p-3 bg-hhgoa-green/8 border border-hhgoa-black/10 items-center sm:items-start">
           
-          {/* Draggable Preview Circle (Matches CardPreview exactly) */}
-          <div 
-            className="relative shrink-0 flex flex-col items-center justify-center bg-black rounded-full cursor-move"
-            style={{ width: "200px", height: "200px", touchAction: "none" }}
-            onMouseDown={(e) => {
-              e.preventDefault();
-              setDragStart({ x: e.clientX, y: e.clientY });
-            }}
-            onTouchStart={(e) => {
-              e.preventDefault();
-              setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
-            }}
-          >
+          {/* Wrapper for SVG Decoration and Preview Circle */}
+          <div className="relative flex items-center justify-center shrink-0" style={{ width: "220px", height: "220px" }}>
+            
+            {/* Profile Picture Container SVG (Background) */}
+            <img
+              src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/profile_picture_container.svg`}
+              alt="Profile Container Decoration"
+              className="absolute"
+              style={{
+                // TWEAK THIS: Size of the background SVG container decoration
+                width: "100%", 
+                height: "100%",
+                zIndex: 0,
+                pointerEvents: "none",
+              }}
+            />
+
+            {/* Draggable Preview Circle (Matches CardPreview exactly) */}
+            <div 
+              className="relative shrink-0 flex flex-col items-center justify-center bg-black cursor-move"
+              style={{ 
+                width: "150px", 
+                height: "150px", 
+                touchAction: "none",
+                borderRadius: "100%",
+                overflow: "hidden",
+                zIndex: 1,
+              }}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                setDragStart({ x: e.clientX, y: e.clientY });
+              }}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+              }}
+            >
             <div
               style={{
                 width: "145px",
@@ -223,6 +247,7 @@ export function ImageUploader({
                 }}
               />
             </div>
+          </div>
           </div>
 
           <div className="space-y-3 flex-1 w-full">
