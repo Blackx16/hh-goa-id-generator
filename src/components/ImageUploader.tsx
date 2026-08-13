@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { ImageTransform } from "@/types/generator";
+import { ImageTransform, GeneratorMode } from "@/types/generator";
 import { SAMPLE_AVATARS } from "@/lib/constants";
 import { soundFx } from "@/lib/sound-effects";
 import { processImageFile } from "@/lib/heic-converter";
