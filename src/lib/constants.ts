@@ -102,8 +102,6 @@ export const BUILDER_CLASSES = [
   "Necromancer",
   "Whisperer",
   "Specialist",
-  "Kernel Cowboy & Pointer Juggler",
-  "Terminal Hermit & Git Wizard",
   "Fullstack Alchemist",
   "Sub-Millisecond Optimizer",
   "Gas-Fee Exorcist",
