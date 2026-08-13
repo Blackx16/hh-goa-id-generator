@@ -139,14 +139,7 @@ export const SAMPLE_AVATARS = [
   },
 ];
 
-export function generateHackerId(): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let id = "";
-  for (let i = 0; i < 4; i++) {
-    id += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return `HHG-2026-${id}`;
-}
+
 
 export function getRandomBuilderClass(): string {
   return BUILDER_CLASSES[Math.floor(Math.random() * BUILDER_CLASSES.length)];

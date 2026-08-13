@@ -342,7 +342,6 @@ async function renderPfpFrame(
   ctx.fillText("LOC: 15.2993° N, 74.1240° E", 30 * scale, size - 26 * scale);
 
   ctx.textAlign = "right";
-  ctx.fillText(userData.hackerId, size - 30 * scale, size - 26 * scale);
 
   // Side tick marks
   const tickAngles = [0, 45, 90, 135, 180, 225, 270, 315];
@@ -710,11 +709,7 @@ async function renderBuilderBadge(
   const infoX = cardX + 160 * scale;
   const infoY = bottomY + 28 * scale;
 
-  // Hacker ID Badge
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `bold ${22 * scale}px 'JetBrains Mono', monospace`;
-  ctx.textAlign = "left";
-  ctx.fillText(userData.hackerId || "HHG-2026-X79A", infoX, infoY);
+  // Removed Hacker ID, now drawing barcode directly.
 
   // Barcode
   drawBarcode(ctx, infoX, infoY + 12 * scale, 340 * scale, 30 * scale, theme.primary);

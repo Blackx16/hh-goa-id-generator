@@ -7,12 +7,12 @@ import { ModeSelector } from "@/components/ModeSelector";
 import { ImageUploader } from "@/components/ImageUploader";
 import { FormControls } from "@/components/FormControls";
 import { CardPreview } from "@/components/CardPreview";
+import { LandingScene, hasSeenLanding } from "@/components/LandingScene";
 import { GeneratorMode, ImageTransform, PfpStyle, ThemeColor, UserData } from "@/types/generator";
 import {
-  generateHackerId,
-  getRandomBuilderClass,
   ROLE_PRESETS,
   SAMPLE_AVATARS,
+  getRandomBuilderClass,
 } from "@/lib/constants";
 import { CheckCircle2, ShieldCheck, Flame } from "lucide-react";
 
@@ -25,8 +25,7 @@ const DEFAULT_USER_DATA: UserData = {
   teamName: "ByteBrigade",
   role: ROLE_PRESETS[0],
   stack: ["Next.js", "Rust", "Solidity", "TailwindCSS"],
-  builderClass: getRandomBuilderClass(),
-  hackerId: generateHackerId(),
+  builderClass: "Fullstack Alchemist",
   qrValue: "https://hhgoa.com/",
   theme: "cyan",
   mode: "badge",
@@ -45,12 +44,26 @@ export default function Home() {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [transform, setTransform] = useState<ImageTransform>(DEFAULT_TRANSFORM);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showLanding, setShowLanding] = useState(true);
+
+  useEffect(() => {
+    // Check if landing was already seen this session
+    if (hasSeenLanding()) {
+      setShowLanding(false);
+    }
+  }, []);
 
   useEffect(() => {
     try {
       const savedUser = localStorage.getItem(STORAGE_KEY);
       if (savedUser) {
         setUserData((prev) => ({ ...prev, ...JSON.parse(savedUser) }));
+      } else {
+        // Randomize only on client to avoid hydration mismatch
+        setUserData((prev) => ({
+          ...prev,
+          builderClass: getRandomBuilderClass(),
+        }));
       }
       
       const savedImage = localStorage.getItem(`${STORAGE_KEY}_image`);
@@ -91,6 +104,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-hhgoa-green flex flex-col">
+      {/* ── Landing Page Overlay ── */}
+      {showLanding && (
+        <LandingScene onEnter={() => setShowLanding(false)} />
+      )}
       <Header />
 
       <main className="flex-1">

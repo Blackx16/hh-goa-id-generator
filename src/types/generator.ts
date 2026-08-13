@@ -18,7 +18,6 @@ export interface UserData {
   role: string;
   stack: string[];
   builderClass: string;
-  hackerId: string;
   qrValue: string;
   theme: ThemeColor;
   mode: GeneratorMode;

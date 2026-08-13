@@ -6,19 +6,19 @@
 
 :root {
   /* HH Goa Brand Palette — strictly 5 colors */
-  --hhgoa-green:   #0b6839;
-  --hhgoa-yellow:  #fee101;
-  --hhgoa-pink:    #ff0080;
-  --hhgoa-white:   #ffffff;
-  --hhgoa-cream:   #fffbe8;
-  --hhgoa-black:   #000000;
+  --hhgoa-green: #0b6839;
+  --hhgoa-yellow: #fee101;
+  --hhgoa-pink: #ff0080;
+  --hhgoa-white: #ffffff;
+  --hhgoa-cream: #fffbe8;
+  --hhgoa-black: #000000;
 
   /* Semantic aliases */
-  --background:    #0b6839;
-  --foreground:    #ffffff;
-  --card-bg:       #fffbe8;
-  --accent:        #fee101;
-  --accent-hot:    #ff0080;
+  --background: #0b6839;
+  --foreground: #ffffff;
+  --card-bg: #fffbe8;
+  --accent: #fee101;
+  --accent-hot: #ff0080;
 }
 
 body {
@@ -34,16 +34,25 @@ body {
 }
 
 /* Scrollbar — Glowing Yellow */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: #0b6839; border-left: 1px solid rgba(254,225,1,0.1); }
-::-webkit-scrollbar-thumb { 
-  background: #fee101; 
-  border-radius: 0; 
-  box-shadow: 0 0 10px rgba(254,225,1,1);
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
 }
-::-webkit-scrollbar-thumb:hover { 
-  background: #ff0080; 
-  box-shadow: 0 0 12px rgba(255,0,128,1);
+
+::-webkit-scrollbar-track {
+  background: #0b6839;
+  border-left: 1px solid rgba(254, 225, 1, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #fee101;
+  border-radius: 0;
+  box-shadow: 0 0 10px rgba(254, 225, 1, 1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff0080;
+  box-shadow: 0 0 12px rgba(255, 0, 128, 1);
 }
 
 /* ═══════════════════════════════════════
@@ -56,7 +65,8 @@ body {
   padding: 10px 20px;
   background-color: var(--hhgoa-yellow);
   color: var(--hhgoa-black);
-  border-radius: 0px;           /* SQUARE — the HH Goa signature */
+  border-radius: 0px;
+  /* SQUARE — the HH Goa signature */
   font-family: 'Victor Mono', monospace;
   font-weight: 700;
   font-size: 13px;
@@ -66,13 +76,25 @@ body {
   cursor: pointer;
   transition: opacity 0.15s ease;
   animation: ctaGlow 2.5s ease-in-out infinite;
+  transform: translateZ(0);
+  /* Force hardware acceleration for Android glow */
+  will-change: box-shadow;
 }
 
-.btn-primary:hover { opacity: 0.9; }
+.btn-primary:hover {
+  opacity: 0.9;
+}
 
 @keyframes ctaGlow {
-  0%, 100% { box-shadow: 0 0 8px rgba(254,225,1,0.6), 0 0 20px rgba(254,225,1,0.3); }
-  50%       { box-shadow: 0 0 18px rgba(254,225,1,0.9), 0 0 40px rgba(254,225,1,0.5); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(254, 225, 1, 0.6), 0 0 20px rgba(254, 225, 1, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 18px rgba(254, 225, 1, 0.9), 0 0 40px rgba(254, 225, 1, 0.5);
+  }
 }
 
 /* ═══════════════════════════════════════
@@ -95,7 +117,9 @@ body {
   transition: opacity 0.15s ease;
 }
 
-.btn-pill:hover { opacity: 0.85; }
+.btn-pill:hover {
+  opacity: 0.85;
+}
 
 /* ═══════════════════════════════════════
    CARD — Cream bg, hard offset shadow
@@ -113,8 +137,8 @@ body {
 .hhgoa-input {
   width: 100%;
   padding: 10px 14px;
-  background-color: rgba(0,0,0,0.25);
-  border: 1.5px solid rgba(254,225,1,0.4);
+  background-color: rgba(0, 0, 0, 0.25);
+  border: 1.5px solid rgba(254, 225, 1, 0.4);
   border-radius: 0px;
   color: var(--hhgoa-white);
   font-family: 'Victor Mono', monospace;
@@ -123,8 +147,13 @@ body {
   transition: border-color 0.15s ease;
 }
 
-.hhgoa-input::placeholder { color: rgba(255,255,255,0.4); }
-.hhgoa-input:focus { border-color: var(--hhgoa-yellow); }
+.hhgoa-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.hhgoa-input:focus {
+  border-color: var(--hhgoa-yellow);
+}
 
 /* ═══════════════════════════════════════
    SECTION LABEL — Victor Mono, 0.1em tracking
@@ -148,8 +177,13 @@ body {
 }
 
 @keyframes marquee {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 /* ═══════════════════════════════════════
@@ -189,11 +223,555 @@ body {
 }
 
 @keyframes livePulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.5; transform: scale(0.8); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
 }
 
 /* Range input accent */
 input[type="range"] {
   accent-color: var(--hhgoa-yellow);
+}
+
+/* ═══════════════════════════════════════
+   LANDING PAGE — Scene Composition
+═══════════════════════════════════════ */
+
+.landing-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: var(--hhgoa-green);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── ONE SET OF VARIABLES TO RULE THEM ALL ── */
+  /* The clamp() function works like this: clamp(MINIMUM_SIZE, PREFERRED_SIZE, MAXIMUM_SIZE)
+     - MINIMUM_SIZE controls how small it gets on ANDROID.
+     - MAXIMUM_SIZE controls how big it gets on DESKTOP.
+     If you only want to change Desktop, ONLY change the MAXIMUM_SIZE (the 3rd number)! */
+
+  /* 1. Logos */
+  --landing-hh-logo-size: clamp(380px, 45vw, 1000px);
+  --landing-goa-logo-size: clamp(70px, 20vw, 100px);
+  --landing-goa-offset: 0px;
+  /* Use this to shift the Goa text up (negative) or down (positive) */
+
+  /* 2. Water / Sea */
+  --landing-sea-height: clamp(60px, 15vh, 550px);
+  --landing-wave-width: 200%;
+  /* Stretch waves horizontally. e.g. 150% or 200% to make them wider. */
+
+  /* 3. Sun (Linked to water height) */
+  --landing-sun-size: clamp(350px, 25vw, 10000px);
+  --landing-sun-bottom: calc(var(--landing-sea-height) - 0px);
+  /* Tucks behind the water slightly */
+  --landing-sun-offset-x: -50%;
+  --landing-sun-offset-y: 0px;
+  /* Horizontal position: -50% is perfectly centered. -20% moves it right, -80% moves it left. */
+
+  /* 4. Boat (Linked to water height) */
+  --landing-boat-size: clamp(35px, 6vw, 80px);
+  --landing-boat-bottom: calc(var(--landing-sea-height) - 10px);
+  /* Sits exactly in the water */
+  --landing-boat-left: 28%;
+  --landing-boat-offset-y: 0px;
+
+  /* 5. Trees */
+  --landing-tree-size: clamp(220px, 25vw, 550px);
+  --landing-tree-offset: -10%;
+  /* How far off-screen the trees go sideways. Negative pushes them outwards. */
+  --landing-tree-bottom: -30px;
+  /* How far down the trees sit. Negative hides the base below the screen. */
+}
+
+.landing-overlay.exiting {
+  transform: translateY(-100%);
+}
+
+/* Loading spinner */
+.landing-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  background-color: var(--hhgoa-green);
+  transition: opacity 0.3s ease;
+}
+
+.landing-loader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.landing-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(254, 225, 1, 0.2);
+  border-top-color: var(--hhgoa-yellow);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Scene container ── */
+.landing-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.landing-logo-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  width: 100%;
+}
+
+.landing-hh-logo {
+  width: var(--landing-hh-logo-size);
+  opacity: 0;
+  transform: translateY(-80px);
+  position: relative;
+}
+
+.landing-hh-logo.animate {
+  animation: dropIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: 0.3s;
+}
+
+.landing-goa-logo {
+  position: absolute;
+  width: var(--landing-goa-logo-size);
+  opacity: 0;
+  transform: translateY(-60px);
+  z-index: 6;
+  /* Goa text explicitly on top of Hacker House logo */
+  margin-top: var(--landing-goa-offset);
+}
+
+.landing-goa-logo.animate {
+  animation: dropIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: 0.6s;
+}
+
+.landing-goa-logo.oscillating {
+  animation: dropIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+    oscillate 3s ease-in-out 1s infinite;
+  animation-delay: 0.6s;
+}
+
+/* ── Buttons ── */
+.landing-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  z-index: 7;
+  /* On top of logos */
+  position: relative;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.landing-buttons.animate {
+  animation: fadeScaleIn 0.35s ease forwards;
+  animation-delay: 1.2s;
+}
+
+/* ── Trees ── */
+.landing-trees-left,
+.landing-trees-right {
+  position: absolute;
+  bottom: var(--landing-tree-bottom);
+  width: var(--landing-tree-size);
+  z-index: 4;
+  opacity: 0;
+}
+
+.landing-trees-left {
+  left: var(--landing-tree-offset);
+  transform: translateX(-100%);
+}
+
+.landing-trees-right {
+  right: var(--landing-tree-offset);
+  transform: translateX(100%);
+}
+
+.landing-trees-left.animate {
+  animation: springInLeft 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: 0.9s;
+}
+
+.landing-trees-right.animate {
+  animation: springInRight 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: 0.9s;
+}
+
+/* Continuous tree sway */
+.landing-trees-left.swaying {
+  animation: springInLeft 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+    treeSway 4s ease-in-out 1.35s infinite;
+  animation-delay: 0.9s;
+  transform-origin: bottom center;
+}
+
+.landing-trees-right.swaying {
+  animation: springInRight 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+    treeSwayReverse 4.5s ease-in-out 1.35s infinite;
+  animation-delay: 0.9s;
+  transform-origin: bottom center;
+}
+
+/* ── Sun ── */
+.landing-sun svg {
+  width: 100%;
+  height: 100%;
+}
+
+.landing-sun {
+  position: absolute;
+  aspect-ratio: 160 / 90;
+  bottom: var(--landing-sun-bottom);
+  margin-bottom: var(--landing-sun-offset-y);
+  left: 50%;
+  transform: translate(var(--landing-sun-offset-x), 100%);
+  z-index: 1;
+  /* Lowest z-index so it's behind everything */
+  opacity: 0;
+  width: var(--landing-sun-size);
+}
+
+.landing-sun.animate {
+  animation: sunRise 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 1.4s;
+}
+
+/* ── Sea / Waves ── */
+.landing-sea {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--landing-sea-height);
+  z-index: 2;
+  opacity: 0;
+}
+
+.landing-sea.animate {
+  animation: fadeSlideUp 0.4s ease forwards;
+  animation-delay: 1.4s;
+}
+
+.landing-wave {
+  position: absolute;
+  bottom: 0;
+  width: 200%;
+  left: -50%;
+}
+
+.landing-wave-1 {
+  animation: waveMove 6s ease-in-out infinite;
+}
+
+.landing-wave-2 {
+  animation: waveMove 8s ease-in-out 0.5s infinite reverse;
+  opacity: 0.8;
+  /* Increased opacity for glistening effect */
+}
+
+/* ── Boat ── */
+.landing-boat svg {
+  width: 100%;
+  height: 100%;
+}
+
+.landing-boat {
+  position: absolute;
+  aspect-ratio: 36 / 28;
+  bottom: var(--landing-boat-bottom);
+  margin-bottom: var(--landing-boat-offset-y);
+  left: var(--landing-boat-left);
+  z-index: 3;
+  opacity: 0;
+  width: var(--landing-boat-size);
+}
+
+.landing-boat.animate {
+  animation: fadeSlideUp 0.4s ease forwards;
+  animation-delay: 1.5s;
+}
+
+.landing-boat.bobbing {
+  animation: fadeSlideUp 0.4s ease forwards,
+    boatBob 3s ease-in-out 1.9s infinite;
+  animation-delay: 1.5s;
+}
+
+/* ── Birds ── */
+.landing-birds {
+  position: absolute;
+  z-index: 6;
+  opacity: 0;
+}
+
+.landing-birds.animate {
+  animation: fadeIn 0.35s ease forwards;
+  animation-delay: 1.7s;
+}
+
+.landing-birds.floating {
+  animation: fadeIn 0.35s ease forwards,
+    birdFloat 2.5s ease-in-out 2.05s infinite;
+  animation-delay: 1.7s;
+}
+
+.landing-birds-1 {
+  top: 18%;
+  right: 22%;
+}
+
+.landing-birds-2 {
+  top: 25%;
+  left: 18%;
+}
+
+/* ── Event info pills ── */
+.landing-info {
+  margin-top: 16px;
+  z-index: 7;
+  /* On top of logos */
+  position: relative;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.landing-info.animate {
+  animation: fadeSlideUpSmall 0.35s ease forwards;
+  animation-delay: 1.25s;
+}
+
+/* ═══════════════════════════════════════
+   LANDING KEYFRAMES
+═══════════════════════════════════════ */
+
+@keyframes dropIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-80px);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(6px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes oscillate {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes fadeScaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes springInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateX(8%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes springInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateX(-8%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes sunRise {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 100%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideUpSmall {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes waveMove {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(5%);
+  }
+}
+
+@keyframes treeSway {
+
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateX(0) rotate(2deg);
+  }
+}
+
+@keyframes treeSwayReverse {
+
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateX(0) rotate(-2.5deg);
+  }
+}
+
+@keyframes boatBob {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  25% {
+    transform: translateY(-6px) translateX(3px);
+  }
+
+  75% {
+    transform: translateY(4px) translateX(-2px);
+  }
+}
+
+@keyframes birdFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* ── Exit animation helpers ── */
+.landing-exit-up {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s ease;
+}
+
+.landing-exit-up.exiting {
+  transform: translateY(-120vh) !important;
+  opacity: 0;
+}
+
+.landing-exit-fade {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.landing-exit-fade.exiting {
+  opacity: 0 !important;
+  transform: scale(0.9);
 }

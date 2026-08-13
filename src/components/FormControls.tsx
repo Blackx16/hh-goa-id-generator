@@ -5,7 +5,6 @@ import { UserData } from "@/types/generator";
 import {
   ROLE_PRESETS,
   getRandomBuilderClass,
-  generateHackerId,
 } from "@/lib/constants";
 import { soundFx } from "@/lib/sound-effects";
 import { User, Users, Dices, Briefcase, Fingerprint } from "lucide-react";
