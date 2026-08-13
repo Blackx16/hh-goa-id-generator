@@ -184,7 +184,15 @@ export function CardPreview({
     const builderClass = userData.builderClass || "Ship or Die Specialist";
     const team = userData.isTeam && userData.teamName.trim() ? `Team: ${userData.teamName.trim()}` : "Solo Hacker";
 
-    const tweetText = `Locked in for Hacker House Goa 2026! 🌊🌴\n\n👤 ${name}\n🚀 ${role}\n⚡ ${builderClass}\n\nGenerated my official badge with #FrameInGoa 👇\n`;
+    let tweetText = "";
+
+    if (userData.mode === "pfp") {
+      // 📝 EDIT PFP SHARE MESSAGE HERE
+      tweetText = `Just updated my PFP for Hacker House Goa 2026! 🌊🌴\n\n👤 ${name}\n🚀 ${role}\n\nGenerated my official frame with 👇\n`;
+    } else {
+      // 📝 EDIT BADGE SHARE MESSAGE HERE
+      tweetText = `Locked in for Hacker House Goa 2026! 🌊🌴\n\n👤 ${name}\n🚀 ${role}\n⚡ ${builderClass}\n\nGenerated my official badge with 👇\n`;
+    }
 
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       tweetText
