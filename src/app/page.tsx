@@ -7,7 +7,7 @@ import { ModeSelector } from "@/components/ModeSelector";
 import { ImageUploader } from "@/components/ImageUploader";
 import { FormControls } from "@/components/FormControls";
 import { CardPreview } from "@/components/CardPreview";
-import { LandingScene, hasSeenLanding } from "@/components/LandingScene";
+import { LandingScene } from "@/components/LandingScene";
 import { GeneratorMode, ImageTransform, PfpStyle, ThemeColor, UserData } from "@/types/generator";
 import {
   ROLE_PRESETS,
@@ -44,14 +44,6 @@ export default function Home() {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [transform, setTransform] = useState<ImageTransform>(DEFAULT_TRANSFORM);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [showLanding, setShowLanding] = useState(true);
-
-  useEffect(() => {
-    // Check if landing was already seen this session
-    if (hasSeenLanding()) {
-      setShowLanding(false);
-    }
-  }, []);
 
   useEffect(() => {
     try {
@@ -103,26 +95,18 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-hhgoa-green flex flex-col">
-      {/* ── Landing Page Overlay ── */}
-      {showLanding && (
-        <LandingScene onEnter={() => setShowLanding(false)} />
-      )}
-      <Header />
+    <div className="min-h-screen bg-hhgoa-green flex flex-col relative">
+      {/* ── Landing Page Scene ── */}
+      <LandingScene />
+      
+      <div id="main-content">
+        <Header />
 
       <main className="flex-1">
 
         {/* ── HERO SECTION ── */}
         <section className="bg-hhgoa-green pt-12 pb-10 px-6">
           <div className="max-w-[1060px] mx-auto text-center space-y-4">
-
-            {/* Overline label */}
-            <div className="inline-flex items-center gap-2">
-              <span className="btn-pill">TASK #1 · SHORTLISTING</span>
-              <span className="btn-pill" style={{ backgroundColor: "#fee101", color: "#000" }}>
-                #FrameInGoa
-              </span>
-            </div>
 
             {/* Main headline */}
             <h1 className="font-heading font-black text-hhgoa-white uppercase leading-none tracking-tight"
@@ -132,25 +116,6 @@ export default function Home() {
               <br />
               GENERATOR
             </h1>
-
-            {/* Sub-tagline */}
-            <p className="font-body text-sm text-hhgoa-white/70 leading-relaxed max-w-xl mx-auto">
-              Craft your custom builder ID badge or X avatar frame for Hacker House Goa 2026.
-              Instant image pan/zoom, dynamic builder classes, 1-click share to X.
-            </p>
-
-            {/* Event details pills */}
-            <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-              {["OCT 28–31, 2026", "GOA, INDIA", "247 BUILDERS"].map((t) => (
-                <span
-                  key={t}
-                  className="px-3 py-1 font-body font-bold text-[11px] uppercase tracking-widest text-hhgoa-black bg-hhgoa-yellow"
-                  style={{ borderRadius: 0 }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
           </div>
         </section>
 
@@ -205,6 +170,7 @@ export default function Home() {
       </main>
 
       <Footer />
+      </div>
     </div>
   );
 }

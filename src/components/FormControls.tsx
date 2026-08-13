@@ -22,6 +22,9 @@ const Label = ({ icon, children }: { icon: React.ReactNode; children: React.Reac
 );
 
 export function FormControls({ userData, onChange }: FormControlsProps) {
+  if (userData.mode === "pfp") {
+    return null;
+  }
 
   const handleRerollClass = () => {
     soundFx.playReroll();

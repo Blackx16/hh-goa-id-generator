@@ -222,8 +222,71 @@ export function CardPreview({
   }
   if (userData.mode === "pfp") {
     return (
-      <div className="flex flex-col items-center justify-center w-full h-full min-h-[500px]">
-        {/* Empty as requested for Format A */}
+      <div className="flex flex-col items-center justify-center space-y-5 w-full">
+        {/* Invisible high-res capture node for PFP export */}
+        <div 
+          ref={captureRef}
+          className="absolute -z-50 opacity-0 pointer-events-none"
+          style={{ width: "1000px", height: "1000px", borderRadius: "100%", overflow: "hidden", background: "transparent" }}
+        >
+          {imageSrc ? (
+            <img
+              src={imageSrc}
+              style={{
+                width: isPortrait ? "100%" : "auto",
+                height: isPortrait ? "auto" : "100%",
+                objectFit: "cover",
+                transform: `translate(${transform.panX * (1000/145)}px, ${transform.panY * (1000/145)}px) scale(${transform.zoom}) rotate(${transform.rotate}deg)`,
+                transformOrigin: "center center",
+              }}
+            />
+          ) : (
+            <div style={{ width: "100%", height: "100%", background: "#111" }} />
+          )}
+        </div>
+        
+        <div className="w-full flex flex-col gap-3 mt-4">
+          <button
+            type="button"
+            onClick={handleDownload}
+            disabled={downloading || !imageSrc}
+            className="w-full py-4 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-cyan-950 font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(34,211,238,0.4)] hover:shadow-[0_0_30px_rgba(34,211,238,0.6)] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {downloading ? (
+              <span className="animate-pulse">GENERATING PFP...</span>
+            ) : (
+              <>
+                <Download className="h-5 w-5" />
+                <span>DOWNLOAD HIGH-RES PFP</span>
+              </>
+            )}
+          </button>
+          
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={handleShareToX}
+              className="py-3 px-4 rounded-xl bg-[#1DA1F2]/10 border border-[#1DA1F2]/30 hover:bg-[#1DA1F2]/20 text-[#1DA1F2] font-bold text-xs flex items-center justify-center gap-2 transition-all group"
+            >
+              <Share2 className="h-4 w-4 group-hover:scale-110 transition-transform" />
+              <span>SHARE TO X</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleCopyImage}
+              className="py-3 px-4 rounded-xl bg-zinc-900 border border-zinc-700 hover:border-cyan-400 text-white font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all group"
+            >
+              {copied ? (
+                <span className="text-emerald-400">COPIED!</span>
+              ) : (
+                <>
+                  <Copy className="h-4 w-4 text-cyan-400 group-hover:scale-110 transition-transform" />
+                  <span>COPY</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -275,58 +338,20 @@ export function CardPreview({
                 justifyContent: "center",
               }}
             >
-              {/* Profile Picture Container SVG (Background) */}
-              <img
-                src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/profile_picture_container.svg`}
-                alt="Profile Container Decoration"
-                className="absolute"
-                style={{
-                  // TWEAK THIS: Size of the background SVG container decoration
-                  width: "220px", 
-                  height: "220px",
-                  zIndex: 0,
-                  pointerEvents: "none",
-                }}
-              />
-
-              {/* The Actual Avatar Circle (Foreground) */}
+              {/* The Actual Avatar Image */}
               <div
                 style={{
-                  // TWEAK THIS: The size of the OUTER CIRCLE
-                  width: "150px",
-                  height: "150px",
-                  // TWEAK THIS: The radius of the outer circle (50% makes it a perfect circle)
+                  width: "145px",
+                  height: "145px",
                   borderRadius: "100%",
-
-                  // TWEAK THIS: Background color of the circle (visible behind the square)
-                  background: "rgba(0, 0, 0, 1)",
-
+                  overflow: "hidden", 
+                  position: "relative",
+                  background: "transparent",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  overflow: "hidden", // Clips the corners of the square if it's too big!
-                  position: "relative",
                   zIndex: 1,
                 }}
-              >
-              {/* The SQUARE inside the circle */}
-              <div
-                  style={{
-                    // TWEAK THIS: The size of the SQUARE inside the circle.
-                    // Note: If you make this larger than 127px, the corners will start getting clipped by the outer circle!
-                    width: "145px",
-                    height: "145px",
-
-                    // TWEAK THIS: The white border on the square (thickness, style, color)
-                    border: "4px solid #FFFFFF",
-
-                    overflow: "hidden", // Keeps the image strictly inside the square
-                    position: "relative",
-                    background: "#111", // Fallback background if no image is uploaded yet
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
               >
                 {imageSrc ? (
                   <img
@@ -347,8 +372,6 @@ export function CardPreview({
                   </div>
                 )}
               </div>
-            </div>
-          </div>
 
             {/* Dynamic Text Overlays using CSS Absolute Positioning */}
 

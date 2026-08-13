@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { motion, useAnimation } from "framer-motion";
 import { HH_GOA_CONFIG } from "@/lib/constants";
 import { ExternalLink } from "lucide-react";
 
@@ -117,46 +118,105 @@ function BirdsSvg({ count = 3 }: { count?: number }) {
    Main LandingScene Component
 ═════════════════════════════════════════ */
 
-interface LandingSceneProps {
-  onEnter: () => void;
-}
-
-export function LandingScene({ onEnter }: LandingSceneProps) {
+export function LandingScene() {
   const [loading, setLoading] = useState(true);
   const [animating, setAnimating] = useState(false);
-  const [exiting, setExiting] = useState(false);
 
-  // Kick off the animation sequence
+  const isExitingRef = useRef(false);
+  const [isRemoved, setIsRemoved] = useState(false);
+  
+  const bgControls = useAnimation();
+  const fgControls = useAnimation();
+  const overlayControls = useAnimation();
+
   useEffect(() => {
-    // Brief loading state, then start animations
     const loadTimer = setTimeout(() => {
       setLoading(false);
       setAnimating(true);
+      try {
+        sessionStorage.setItem(SESSION_KEY, "1");
+      } catch (e) {}
     }, 300);
 
     return () => clearTimeout(loadTimer);
   }, []);
 
-  const handleEnter = useCallback(() => {
-    if (exiting) return;
-    setExiting(true);
+  // Lock body scroll when landing scene is mounted and not exited yet
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
 
-    // Mark as seen in this session
-    try {
-      sessionStorage.setItem(SESSION_KEY, "1");
-    } catch (e) {}
+  const triggerExit = useCallback(async () => {
+    if (isExitingRef.current) return;
+    isExitingRef.current = true;
 
-    // Wait for the exit animation to finish, then call onEnter
-    setTimeout(() => {
-      onEnter();
-    }, 750);
-  }, [exiting, onEnter]);
+    // 1. Fade out background elements (trees, sun, sea)
+    await bgControls.start({
+      opacity: 0,
+      transition: { duration: 0.5, ease: "easeOut" }
+    });
 
-  // Build class helper
+    // 2. Lift off foreground elements (Hacker house, goa, buttons)
+    fgControls.start({
+      y: "-100vh",
+      opacity: 0,
+      transition: { duration: 0.7, ease: [0.4, 0, 0.2, 1] } // nice ease in out
+    });
+
+    // Wait for a little bit to let foreground lift off start
+    await new Promise((resolve) => setTimeout(resolve, 200));
+
+    // 3. Fade out overlay
+    await overlayControls.start({
+      opacity: 0,
+      transition: { duration: 0.4, ease: "easeInOut" }
+    });
+
+    // 4. Unlock scroll and remove from DOM completely
+    document.body.style.overflow = "";
+    setIsRemoved(true);
+  }, [bgControls, fgControls, overlayControls]);
+
+  // Event listeners for scroll / touch
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY > 20) {
+        triggerExit();
+      }
+    };
+
+    let touchStartY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+    const handleTouchMove = (e: TouchEvent) => {
+      const deltaY = touchStartY - e.touches[0].clientY;
+      // If user swipes up (scrolling down)
+      if (deltaY > 30) {
+        triggerExit();
+      }
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: true });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [triggerExit]);
+
   const cls = (...classes: (string | false | undefined)[]) => classes.filter(Boolean).join(" ");
 
+  if (isRemoved) return null;
+
   return (
-    <div className={cls("landing-overlay", exiting && "exiting")}>
+    <motion.div animate={overlayControls} initial={{ opacity: 1 }} className={cls("landing-overlay")}>
       {/* Loading spinner */}
       <div className={cls("landing-loader", !loading && "hidden")}>
         <div className="landing-spinner" />
@@ -164,159 +224,106 @@ export function LandingScene({ onEnter }: LandingSceneProps) {
 
       {/* Scene */}
       <div className="landing-scene">
-        {/* ── Birds ── */}
-        <div className={cls(
-          "landing-birds landing-birds-1",
-          animating && !exiting && "floating",
-          animating && exiting && "animate",
-          exiting && "landing-exit-fade exiting"
-        )}>
-          <BirdsSvg count={3} />
-        </div>
-        <div className={cls(
-          "landing-birds landing-birds-2",
-          animating && !exiting && "floating",
-          exiting && "landing-exit-fade exiting"
-        )}>
-          <BirdsSvg count={2} />
-        </div>
-
-        {/* ── Sun ── */}
-        <div className={cls(
-          "landing-sun",
-          animating && "animate",
-          exiting && "landing-exit-fade exiting"
-        )}>
-          <SunSvg />
-        </div>
-
-        {/* ── Center content (logos + buttons) ── */}
-        <div className={cls("landing-logo-container landing-exit-up", exiting && "exiting")}>
-          <img
-            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/hacker-house.png`}
-            alt="Hacker House"
-            className={cls(
-              "landing-hh-logo",
-              animating && "animate"
-            )}
-            draggable={false}
-          />
-          <img
-            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/goa-hindi.svg`}
-            alt="गोवा Goa"
-            className={cls(
-              "landing-goa-logo",
-              animating && !exiting && "oscillating",
-              animating && exiting && "animate"
-            )}
-            draggable={false}
-          />
-        </div>
-
-        {/* Event info pills */}
-        <div className={cls(
-          "landing-info landing-exit-up",
-          animating && "animate",
-          exiting && "exiting"
-        )}>
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
-            {["OCT 28–31, 2026", "GOA, INDIA", "247 BUILDERS"].map((t) => (
-              <span
-                key={t}
-                style={{
-                  padding: "4px 12px",
-                  fontFamily: "'Victor Mono', monospace",
-                  fontWeight: 700,
-                  fontSize: "10px",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase" as const,
-                  color: "#000",
-                  backgroundColor: "#fee101",
-                }}
-              >
-                {t}
-              </span>
-            ))}
+        {/* ── Background Elements (fade first) ── */}
+        <motion.div 
+          animate={bgControls} 
+          initial={{ opacity: 1 }}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+        >
+          <div className={cls("landing-birds landing-birds-1", animating && "floating")}>
+            <BirdsSvg count={3} />
           </div>
-        </div>
+          <div className={cls("landing-birds landing-birds-2", animating && "floating")}>
+            <BirdsSvg count={2} />
+          </div>
 
-        {/* CTA Buttons */}
-        <div className={cls(
-          "landing-buttons landing-exit-up",
-          animating && "animate",
-          exiting && "exiting"
-        )}>
-          <button
-            className="btn-primary"
-            onClick={handleEnter}
-            style={{ fontSize: "14px", padding: "12px 28px" }}
-          >
-            BUILD YOUR ID →
-          </button>
-          <a
-            href={HH_GOA_CONFIG.devfolioUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-pill"
-            style={{ fontSize: "12px", padding: "10px 20px", display: "inline-flex", alignItems: "center", gap: "6px" }}
-          >
-            APPLY
-            <ExternalLink className="h-3 w-3" />
-          </a>
-        </div>
+          <div className={cls("landing-sun", animating && "animate")}>
+            <SunSvg />
+          </div>
 
-        {/* ── Trees ── */}
-        <img
-          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/trees_left.svg?v=2`}
-          alt=""
-          className={cls(
-            "landing-trees-left",
-            animating && !exiting && "swaying",
-            animating && exiting && "animate",
-            exiting && "landing-exit-fade exiting"
-          )}
-          draggable={false}
-          style={{ objectFit: "contain", objectPosition: "bottom left" }}
-        />
-        <img
-          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/trees_right.svg?v=2`}
-          alt=""
-          className={cls(
-            "landing-trees-right",
-            animating && !exiting && "swaying",
-            animating && exiting && "animate",
-            exiting && "landing-exit-fade exiting"
-          )}
-          draggable={false}
-          style={{ objectFit: "contain", objectPosition: "bottom right" }}
-        />
+          <div className={cls("landing-sea", animating && "animate")}>
+            <WavesSvg />
+          </div>
 
-        {/* ── Sea & Waves ── */}
-        <div className={cls(
-          "landing-sea",
-          animating && "animate",
-          exiting && "landing-exit-fade exiting"
-        )}>
-          <WavesSvg />
-        </div>
+          <div className={cls("landing-boat", animating && "bobbing")}>
+            <BoatSvg />
+          </div>
 
-        {/* ── Boat ── */}
-        <div className={cls(
-          "landing-boat",
-          animating && !exiting && "bobbing",
-          animating && exiting && "animate",
-          exiting && "landing-exit-fade exiting"
-        )}>
-          <BoatSvg />
-        </div>
+          <img
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/trees_left.svg?v=2`}
+            alt=""
+            className={cls("landing-trees-left", animating && "swaying")}
+            draggable={false}
+            style={{ objectFit: "contain", objectPosition: "bottom left" }}
+          />
+          <img
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/trees_right.svg?v=2`}
+            alt=""
+            className={cls("landing-trees-right", animating && "swaying")}
+            draggable={false}
+            style={{ objectFit: "contain", objectPosition: "bottom right" }}
+          />
+        </motion.div>
+
+        {/* ── Foreground Elements (lift off and fade later) ── */}
+        <motion.div 
+          animate={fgControls} 
+          initial={{ y: 0, opacity: 1 }}
+          className="relative z-10 flex flex-col items-center justify-center w-full h-full pointer-events-auto mt-[-100px]"
+        >
+          <div className="landing-logo-container">
+            <img
+              src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/hacker-house.png`}
+              alt="Hacker House"
+              className={cls("landing-hh-logo", animating && "animate")}
+              draggable={false}
+            />
+            <img
+              src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/goa-hindi.svg`}
+              alt="गोवा Goa"
+              className={cls("landing-goa-logo", animating && "oscillating")}
+              draggable={false}
+            />
+          </div>
+
+          {/* Event info pills */}
+          <div className={cls("landing-info", animating && "animate")}>
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+              {["OCT 28–31, 2026", "GOA, INDIA", "247 BUILDERS"].map((t) => (
+                <span
+                  key={t}
+                  style={{
+                    padding: "4px 12px",
+                    fontFamily: "'Victor Mono', monospace",
+                    fontWeight: 700,
+                    fontSize: "10px",
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase" as const,
+                    color: "#000",
+                    backgroundColor: "#fee101",
+                  }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className={cls("landing-buttons", animating && "animate")}>
+            <button className="btn-primary" onClick={triggerExit} style={{ fontSize: "14px", padding: "12px 28px" }}>
+              <span className="live-dot" /> BUILD YOUR ID
+            </button>
+            <a href={HH_GOA_CONFIG.devfolioUrl} target="_blank" rel="noopener noreferrer" className="btn-pill" style={{ fontSize: "12px", padding: "10px 20px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+              REGISTER TO ATTEND <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-/**
- * Check if the landing animation has already been seen in this session.
- */
 export function hasSeenLanding(): boolean {
   return false;
 }

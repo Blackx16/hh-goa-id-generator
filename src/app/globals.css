@@ -246,15 +246,18 @@ input[type="range"] {
 
 .landing-overlay {
   position: fixed;
-  inset: 0;
-  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 100;
   background-color: var(--hhgoa-green);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* ── ONE SET OF VARIABLES TO RULE THEM ALL ── */
   /* The clamp() function works like this: clamp(MINIMUM_SIZE, PREFERRED_SIZE, MAXIMUM_SIZE)

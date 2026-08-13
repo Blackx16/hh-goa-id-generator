@@ -45,16 +45,15 @@ export function Header() {
           rel="noopener noreferrer"
           className="flex items-center gap-3 group hover:opacity-90 transition-opacity"
         >
-          {/* गोवा-style badge */}
-          <div className="relative">
-            <div
-              className="h-9 w-9 flex items-center justify-center rounded-full border-2 border-hhgoa-yellow text-hhgoa-yellow font-heading font-black text-sm leading-none"
-              style={{ backgroundColor: "#ff0080" }}
-            >
-              HH
-            </div>
+          {/* Hacker House Logo */}
+          <div className="h-10 flex items-center justify-center rounded-full overflow-hidden border border-hhgoa-yellow/20 bg-hhgoa-black p-1">
+            <img 
+              src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/hacker-house.png`} 
+              alt="Hacker House" 
+              className="h-full object-contain"
+            />
           </div>
-          <div>
+          <div className="hidden sm:block">
             <div className="font-heading font-black text-hhgoa-white text-lg leading-none uppercase tracking-wide">
               HACKER HOUSE
             </div>
@@ -66,6 +65,13 @@ export function Header() {
 
         {/* Right nav */}
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => window.location.reload()}
+            className="hidden sm:inline-flex btn-pill text-[10px] px-3 py-1.5"
+          >
+            BACK TO LANDING
+          </button>
+
           <a
             href={HH_GOA_CONFIG.officialUrl}
             target="_blank"
