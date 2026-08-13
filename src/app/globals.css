@@ -279,7 +279,7 @@ input[type="range"] {
   --landing-sun-bottom: calc(var(--landing-sea-height) - 0px);
   /* Tucks behind the water slightly */
   --landing-sun-offset-x: -50%;
-  --landing-sun-offset-y: 0px;
+  --landing-sun-offset-y: -80px;
   /* Horizontal position: -50% is perfectly centered. -20% moves it right, -80% moves it left. */
 
   /* 4. Boat (Linked to water height) */
@@ -287,7 +287,7 @@ input[type="range"] {
   --landing-boat-bottom: calc(var(--landing-sea-height) - 10px);
   /* Sits exactly in the water */
   --landing-boat-left: 28%;
-  --landing-boat-offset-y: 0px;
+  --landing-boat-offset-y: -60px;
 
   /* 5. Trees */
   --landing-tree-size: clamp(220px, 25vw, 550px);
@@ -659,12 +659,12 @@ input[type="range"] {
 @keyframes sunRise {
   0% {
     opacity: 0;
-    transform: translate(-50%, 100%);
+    transform: translate(var(--landing-sun-offset-x), 100%);
   }
 
   100% {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translate(var(--landing-sun-offset-x), 0);
   }
 }
 
