@@ -109,10 +109,19 @@ export const BUILDER_CLASSES = [
   "Gas-Fee Exorcist",
   "Professional Smoker",
   "Electricity bill Increaser",
-  "Clanker Enthusiast.",
+  "Clanker Enthusiast",
   "Computer Person",
   "Guy.",
   "Back-end specialist 😏",
+  "Front-end vibecoder",
+  "Antigravity paglu",
+  "GPT customer",
+  "Ponytail student",
+  "MCP Manager",
+  "Spotify Spicer",
+  "Girl.",
+  "Terminal crawler",
+
 ];
 
 export const SAMPLE_AVATARS = [
