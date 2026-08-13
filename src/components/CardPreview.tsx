@@ -189,7 +189,7 @@ export function CardPreview({
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       tweetText
     )}&url=${encodeURIComponent("https://blackx16.github.io/hh-goa-id-generator/")}&hashtags=${encodeURIComponent(
-      "FrameInGoa,HackerHouseGoa,HHGoa2026"
+      "FrameInGoa"
     )}`;
 
     window.open(shareUrl, "_blank", "width=600,height=500");
