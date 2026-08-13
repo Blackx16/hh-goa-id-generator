@@ -286,37 +286,35 @@ export function LandingScene() {
             />
           </div>
 
-          {/* Event info pills */}
-          <div className={cls("landing-info", animating && "animate")}>
-            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
-              {["OCT 28–31, 2026", "GOA, INDIA", "247 BUILDERS"].map((t) => (
-                <span
-                  key={t}
-                  style={{
-                    padding: "4px 12px",
-                    fontFamily: "'Victor Mono', monospace",
-                    fontWeight: 700,
-                    fontSize: "10px",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase" as const,
-                    color: "#000",
-                    backgroundColor: "#fee101",
-                  }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* CTA Buttons */}
+          {/* CTA Buttons with Decorations */}
           <div className={cls("landing-buttons", animating && "animate")}>
-            <button className="btn-primary" onClick={triggerExit} style={{ fontSize: "14px", padding: "12px 28px" }}>
-              <span className="live-dot" /> BUILD YOUR ID
+            <button 
+              className="btn-primary relative overflow-hidden flex flex-col items-center justify-center" 
+              onClick={triggerExit} 
+              style={{ fontSize: "14px", padding: "16px 36px" }}
+            >
+              {/* Top Border Decoration */}
+              <img 
+                src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/border-decorations-1.svg`} 
+                alt="" 
+                className="absolute top-0 left-0 w-full"
+                style={{ height: "6px", objectFit: "cover", opacity: 0.8 }}
+                draggable={false}
+              />
+              
+              <div className="flex items-center gap-2 z-10 relative">
+                <span className="live-dot" /> BUILD YOUR ID
+              </div>
+
+              {/* Bottom Border Decoration */}
+              <img 
+                src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/border-decorations-1.svg`} 
+                alt="" 
+                className="absolute bottom-0 left-0 w-full"
+                style={{ height: "6px", objectFit: "cover", transform: "scaleY(-1)", opacity: 0.8 }} 
+                draggable={false}
+              />
             </button>
-            <a href={HH_GOA_CONFIG.devfolioUrl} target="_blank" rel="noopener noreferrer" className="btn-pill" style={{ fontSize: "12px", padding: "10px 20px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
-              REGISTER TO ATTEND <ExternalLink className="h-3 w-3" />
-            </a>
           </div>
         </motion.div>
       </div>

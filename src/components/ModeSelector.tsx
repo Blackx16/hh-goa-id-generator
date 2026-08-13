@@ -44,23 +44,48 @@ export function ModeSelector({
         {[
           { id: "pfp"   as GeneratorMode, label: "FORMAT A: PFP FRAME",  Icon: UserCircle },
           { id: "badge" as GeneratorMode, label: "FORMAT B: BUILDER ID", Icon: BadgeCheck },
-        ].map(({ id, label, Icon }) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => handleMode(id)}
-            className={`flex items-center justify-center gap-2 py-2.5 px-3 font-body text-xs font-bold uppercase tracking-wider transition-all ${
-              mode === id
-                ? "bg-hhgoa-yellow text-hhgoa-black"
-                : "text-hhgoa-white/70 hover:text-hhgoa-white bg-transparent"
-            }`}
-            style={{ borderRadius: 0 }}
-          >
-            <Icon className="h-4 w-4 shrink-0" />
-            <span className="hidden sm:inline">{label}</span>
-            <span className="sm:hidden">{id === "badge" ? "BADGE" : "PFP"}</span>
-          </button>
-        ))}
+        ].map(({ id, label, Icon }) => {
+          const isActive = mode === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              onClick={() => handleMode(id)}
+              className={`relative overflow-hidden flex flex-col items-center justify-center py-3 px-3 font-body text-xs font-bold uppercase tracking-wider transition-all ${
+                isActive
+                  ? "bg-hhgoa-yellow text-hhgoa-black"
+                  : "text-hhgoa-white/70 hover:text-hhgoa-white bg-transparent"
+              }`}
+              style={{ borderRadius: 0 }}
+            >
+              {isActive && (
+                <img 
+                  src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/border-decorations-1.svg`} 
+                  alt="" 
+                  className="absolute top-0 left-0 w-full"
+                  style={{ height: "4px", objectFit: "cover", opacity: 0.8 }}
+                  draggable={false}
+                />
+              )}
+              
+              <div className="flex items-center gap-2 z-10 relative">
+                <Icon className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">{label}</span>
+                <span className="sm:hidden">{id === "badge" ? "BADGE" : "PFP"}</span>
+              </div>
+
+              {isActive && (
+                <img 
+                  src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/border-decorations-1.svg`} 
+                  alt="" 
+                  className="absolute bottom-0 left-0 w-full"
+                  style={{ height: "4px", objectFit: "cover", transform: "scaleY(-1)", opacity: 0.8 }} 
+                  draggable={false}
+                />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* PFP Style (badge mode only) */}

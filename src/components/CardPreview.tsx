@@ -292,7 +292,7 @@ export function CardPreview({
   }
 
   return (
-    <div className="flex flex-col items-center space-y-5">
+    <div className="flex flex-col-reverse sm:flex-col items-center gap-5">
       {/* 3D Interactive Tilt Card Container */}
       <div
         ref={containerRef}
@@ -329,29 +329,42 @@ export function CardPreview({
             <div
               className="absolute z-10"
               style={{
-                // TWEAK THIS: Position of the Avatar Image Block on the card
                 top: "19.5%",
                 left: "50%",
-                transform: "translateX(-50%)", // Centers it horizontally
+                transform: "translateX(-50%)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              {/* The Actual Avatar Image */}
+              {/* The Actual Avatar Circle (Foreground) */}
               <div
                 style={{
-                  width: "145px",
-                  height: "145px",
+                  width: "150px",
+                  height: "150px",
                   borderRadius: "100%",
-                  overflow: "hidden", 
-                  position: "relative",
-                  background: "transparent",
+                  background: "rgba(0, 0, 0, 1)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  overflow: "hidden", // Clips the corners of the square if it's too big!
+                  position: "relative",
                   zIndex: 1,
                 }}
+              >
+              {/* The SQUARE inside the circle */}
+              <div
+                  style={{
+                    width: "145px",
+                    height: "145px",
+                    border: "4px solid #FFFFFF",
+                    overflow: "hidden", // Keeps the image strictly inside the square
+                    position: "relative",
+                    background: "#111", // Fallback background if no image is uploaded yet
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
               >
                 {imageSrc ? (
                   <img
@@ -372,6 +385,7 @@ export function CardPreview({
                   </div>
                 )}
               </div>
+            </div>
             </div>
 
             {/* Dynamic Text Overlays using CSS Absolute Positioning */}

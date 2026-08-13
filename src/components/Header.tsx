@@ -38,40 +38,32 @@ export function Header() {
       {/* Main Nav Bar */}
       <div className="max-w-[1060px] mx-auto px-6 h-16 flex items-center justify-between">
 
-        {/* Brand — left */}
-        <a
-          href={HH_GOA_CONFIG.officialUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-3 group hover:opacity-90 transition-opacity"
-        >
-          {/* Hacker House Logo */}
-          <div className="h-10 flex items-center justify-center rounded-full overflow-hidden border border-hhgoa-yellow/20 bg-hhgoa-black p-1">
-            <img 
-              src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/hacker-house.png`} 
-              alt="Hacker House" 
-              className="h-full object-contain"
-            />
-          </div>
-          <div className="hidden sm:block">
-            <div className="font-heading font-black text-hhgoa-white text-lg leading-none uppercase tracking-wide">
-              HACKER HOUSE
+        {/* Left nav */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => window.location.reload()}
+            className="flex items-center justify-center text-hhgoa-yellow hover:text-hhgoa-yellow/80 transition-colors"
+            title="Back to Landing"
+          >
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+               <path d="M19 12H5M12 19l-7-7 7-7"/>
+             </svg>
+          </button>
+          
+          <a
+            href={HH_GOA_CONFIG.officialUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 group hover:opacity-90 transition-opacity"
+          >
+            <div className="font-heading font-black text-hhgoa-white text-lg leading-none uppercase tracking-wide hidden sm:block pt-1">
+              247PM STUDIO
             </div>
-            <div className="section-label mt-0.5 text-hhgoa-yellow/80" style={{ fontSize: "10px" }}>
-              GOA 2026 · FRAME GENERATOR
-            </div>
-          </div>
-        </a>
+          </a>
+        </div>
 
         {/* Right nav */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => window.location.reload()}
-            className="hidden sm:inline-flex btn-pill text-[10px] px-3 py-1.5"
-          >
-            BACK TO LANDING
-          </button>
-
           <a
             href={HH_GOA_CONFIG.officialUrl}
             target="_blank"
@@ -87,10 +79,31 @@ export function Header() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => soundFx.playClick()}
-            className="btn-primary text-xs"
+            className="btn-primary relative overflow-hidden flex flex-col items-center justify-center text-xs"
+            style={{ padding: "12px 24px" }}
           >
-            APPLY
-            <ExternalLink className="h-3 w-3" />
+            {/* Top Border Decoration */}
+            <img 
+              src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/border-decorations-1.svg`} 
+              alt="" 
+              className="absolute top-0 left-0 w-full"
+              style={{ height: "4px", objectFit: "cover", opacity: 0.8 }}
+              draggable={false}
+            />
+            
+            <div className="flex items-center gap-1.5 z-10 relative">
+              APPLY
+              <ExternalLink className="h-3 w-3" />
+            </div>
+
+            {/* Bottom Border Decoration */}
+            <img 
+              src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/landing/border-decorations-1.svg`} 
+              alt="" 
+              className="absolute bottom-0 left-0 w-full"
+              style={{ height: "4px", objectFit: "cover", transform: "scaleY(-1)", opacity: 0.8 }} 
+              draggable={false}
+            />
           </a>
         </div>
       </div>

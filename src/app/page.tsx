@@ -155,7 +155,7 @@ export default function Home() {
               </div>
 
               {/* Right: Card Preview (5 cols) */}
-              <div className="lg:col-span-5 lg:sticky lg:top-24">
+              <div className="lg:col-span-5">
                 <CardPreview
                   userData={userData}
                   imageSrc={imageSrc}

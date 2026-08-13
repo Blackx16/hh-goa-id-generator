@@ -148,7 +148,7 @@ export function FormControls({ userData, onChange }: FormControlsProps) {
         <input
           type="text"
           value={userData.builderClass}
-          maxLength={36} // TWEAK THIS: Set your own maximum character limit for Builder Title here
+          maxLength={28} // TWEAK THIS: Set your own maximum character limit for Builder Title here
           placeholder="e.g. Zero-Knowledge Necromancer"
           onChange={(e) => onChange({ builderClass: e.target.value })}
           className="hhgoa-input text-xs bg-hhgoa-cream"
