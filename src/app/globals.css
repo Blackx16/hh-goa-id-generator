@@ -5,6 +5,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Imbue:opsz,wght@10..20,100..900&family=Victor+Mono:ital,wght@0,100..700;1,100..700&display=swap');
 
 :root {
+  color-scheme: light;
   /* HH Goa Brand Palette — strictly 5 colors */
   --hhgoa-green: #0b6839;
   --hhgoa-yellow: #fee101;
@@ -108,9 +109,10 @@ body {
   background-color: var(--hhgoa-pink);
   color: var(--hhgoa-white);
   border-radius: 9999px;
-  font-family: 'Imbue', Georgia, serif;
+  font-family: monospace;
   font-size: 11px;
   font-weight: 700;
+  
   text-transform: uppercase;
   border: none;
   cursor: pointer;
@@ -125,7 +127,7 @@ body {
    CARD — Cream bg, hard offset shadow
 ═══════════════════════════════════════ */
 .hhgoa-card {
-  background-color: var(--hhgoa-cream);
+  background-color: rgba(254, 225, 1, 0.4);
   color: var(--hhgoa-black);
   border-radius: 4px;
   box-shadow: 6px 8px 0 rgba(0, 0, 0, 0.25);
@@ -297,13 +299,11 @@ input[type="range"] {
   /* How far off-screen the trees go sideways. Negative pushes them outwards. */
   --landing-tree-bottom: -30px;
   /* How far down the trees sit. Negative hides the base below the screen. */
-
-  /* 6. UI Elements */
-  --upload-card-bg: rgba(255, 0, 128, 0.8); /* Pink background for the photo uploader. Change 0.10 to tune opacity. */
 }
 
+
 .bg-upload-card {
-  background-color: var(--upload-card-bg) !important;
+  background-color: rgba(255, 0, 128, 0.3) !important;
 }
 
 .landing-overlay.exiting {

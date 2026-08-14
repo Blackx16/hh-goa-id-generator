@@ -121,9 +121,9 @@ export function ImageUploader({
           <button
             type="button"
             onClick={() => { soundFx.playClick(); onImageChange(null); }}
-            className="flex items-center gap-1 font-body text-[11px] font-bold uppercase text-hhgoa-pink hover:opacity-75 transition-opacity"
+            className="flex items-center gap-1.5 font-body text-sm font-black uppercase text-hhgoa-yellow hover:opacity-75 transition-opacity"
           >
-            <Trash2 className="h-3 w-3" />
+            <Trash2 className="h-4 w-4" />
             CLEAR
           </button>
         )}
@@ -322,7 +322,7 @@ export function ImageUploader({
         <button
           type="button"
           onClick={() => { soundFx.playClick(); setIsWebcamOpen(true); }}
-          className="w-full flex items-center justify-center gap-2 py-2.5 font-body text-xs font-bold uppercase text-hhgoa-pink hover:bg-hhgoa-pink/10 transition-colors border border-hhgoa-pink/30"
+          className="w-full flex items-center justify-center gap-2 py-2.5 font-body text-xs font-bold uppercase text-hhgoa-yellow bg-hhgoa-pink hover:bg-hhgoa-pink/90 transition-colors"
           style={{ borderRadius: 0 }}
         >
           <Camera className="h-4 w-4" />

@@ -32,13 +32,12 @@ export function FormControls({ userData, onChange }: FormControlsProps) {
   };
 
   return (
-    <div className="hhgoa-card p-5 space-y-5">
+    <div className="hhgoa-card p-5 space-y-5 bg-hhgoa-yellow">
 
       {/* Card header */}
       <div className="flex items-center justify-between border-b border-hhgoa-black/10 pb-3">
         <div className="flex items-center gap-2 font-heading font-bold text-hhgoa-black text-sm uppercase tracking-wide">
           <Fingerprint className="h-4 w-4 text-hhgoa-green shrink-0" />
-          HACKER CREDENTIALS
         </div>
         <span className="flex items-center gap-1 section-label text-[9px] text-hhgoa-green">
           <span className="live-dot" style={{ backgroundColor: "#0b6839" }} />
@@ -139,8 +138,8 @@ export function FormControls({ userData, onChange }: FormControlsProps) {
           <button
             type="button"
             onClick={handleRerollClass}
-            className="btn-pill text-[10px] px-2.5 py-1"
-            style={{ fontSize: "10px" }}
+            className="btn-pill px-8 py-2 w-32 justify-center"
+            style={{ fontSize: "14px" }}
           >
             🎲 REROLL
           </button>
