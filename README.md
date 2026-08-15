@@ -20,7 +20,6 @@ Everything runs 100% in the browser with sub-second rendering, offline capabilit
 ### 🎴 Dual Generation Modes (Format A & B)
 - **Format A: PFP Frame / Overlay (1:1 Aspect Ratio)**
   - Circular & square framing tailored for X (Twitter) profile pictures.
-  - 4 cyberpunk styles: `Cyber Ring`, `Hexagon Shield`, `Terminal Minimal`, and `Holographic Wave`.
   - Neon event branding, coordinate stamps (`15.2993° N, 74.1240° E`), and dynamic corner badges.
 - **Format B: Builder ID Card (3:4 Aspect Ratio)**
   - Vertical event lanyard badge layout.
@@ -35,13 +34,10 @@ Everything runs 100% in the browser with sub-second rendering, offline capabilit
   - 90° rotation button & 1-click "Center / Reset" button.
   - Automatic aspect ratio handling for portrait, landscape, and off-center photos.
 
-### 🎨 Cyberpunk Theme Engine
-- **4 Colorways**:
-  - 🩵 **Cyber Cyan** (Neon Cyan `#00f0ff` & Electric Blue)
-  - 🧡 **Sunset Amber** (Goa Sunset Amber `#ffaa00` & Deep Orange)
-  - 💚 **Terminal Green** (Phosphor Green `#00ff66` & Matrix Emerald)
-  - 💜 **Holographic VIP** (Iridescent Violet `#d946ef` & Hot Pink)
-- **Brutalist / HH Goa Aesthetic**: Technical grids, coordinate stamps, corner notches, scanlines, and retro telemetry tickers.
+### 🎨 HH Goa Native Design System
+- **Event Colors**: Uses the official 5-color palette (HH Goa Green `#0b6839`, Yellow `#fee101`, Pink `#ff0080`, Cream `#fffbe8`, Black `#000000`).
+- **Typography**: Authentic `Imbue` (serif) and `Victor Mono` typefaces matching the event site.
+- **Visuals**: Animated landing scene with SVGs, hard offset shadows, and brutalist card aesthetics instead of legacy cyberpunk styling.
 
 ### 💾 Local Persistence & Audio FX
 - **Session Memory**: Auto-saves form fields to `localStorage` so user entries persist across page reloads.
